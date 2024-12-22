@@ -78,31 +78,19 @@ function NewEnemy()
         
     end,
     Move = function (self)
-        local newAngle = math.asin(math.abs((Player.x - self.x)/math.sqrt((Player.x - self.x)^2 + (Player.y - self.y)^2)))
-
-        self.angle = lerp(self.angle, newAngle, 0.1)
-
-        local dx = math.sin(self.angle)*self.speed
-        local dy = math.cos(self.angle)*self.speed
-
-        if Player.x < self.x then
-            dx = dx * -1
-        end
-        if Player.y < self.y then
-            dy = dy * -1
-        end
-
-        -- self.x = self.x + dx * DeltaTime * 60
-        -- self.y = self.y + dy * DeltaTime * 60
+        local dx = 0
+        local dy = 0
+        -- local nearEnemiesCount = 0
         for i=1, #Enemies do
             if Enemies[i] == self then goto continue end
             local distanceToOthers = math.sqrt((Enemies[i].x - self.x)^2 + (Enemies[i].y - self.y)^2)
-            if distanceToOthers > self.size*1.5 then goto continue end
+            -- if distanceToOthers > self.size*1.5 then goto continue end
+            -- nearEnemiesCount = nearEnemiesCount + 1
             
             local newAngleToEnemy = math.asin(math.abs((Enemies[i].x - self.x)/distanceToOthers))
 
-            local ddx = -math.sin(newAngleToEnemy)*self.speed/2
-            local ddy = -math.cos(newAngleToEnemy)*self.speed/2
+            local ddx = -math.sin(newAngleToEnemy)*self.speed* 7/(distanceToOthers - self.size*1.2)
+            local ddy = -math.cos(newAngleToEnemy)*self.speed* 7/(distanceToOthers - self.size*1.2)
 
             if Enemies[i].x < self.x then
                 ddx = ddx * -1
@@ -116,7 +104,24 @@ function NewEnemy()
 
             ::continue::
         end
+        local distanceToPlayer = math.sqrt((Player.x - self.x)^2 + (Player.y - self.y)^2)
+        local newAngle = math.asin(math.abs((Player.x - self.x)/distanceToPlayer))
 
+        self.angle = lerp(self.angle, newAngle, 0.1)
+
+        local ddx = math.sin(self.angle)*self.speed
+        local ddy = math.cos(self.angle)*self.speed
+
+        if Player.x < self.x then
+            ddx = ddx * -1
+        end
+        if Player.y < self.y then
+            ddy = ddy * -1
+        end
+        
+        dx = dx + ddx
+        dy = dy + ddy
+        
         self.sx = self.sx * 0.5 + dx
         self.sy = self.sy * 0.5 + dy
 
