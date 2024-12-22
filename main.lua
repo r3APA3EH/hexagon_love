@@ -3,6 +3,13 @@ require("enemy")
 require("bullet")
 require("utils")
 
+
+function love.keypressed( key, scancode, isrepeat )
+    if scancode == "space" then
+        ShowHitboxes = not ShowHitboxes
+    end
+end
+
 function love.focus(f) GameIsPaused = not f end
 
 function love.load()
@@ -74,4 +81,8 @@ function love.draw()
     end
 
     Player:Draw()
+
+
+    -- love.graphics.ellipse("fill", 100, 100, 50, 55, 3)
+    -- love.graphics.rectangle("fill", 25, 75, 75, 50, 3, 10, 10)
 end

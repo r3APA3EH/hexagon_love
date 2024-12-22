@@ -27,8 +27,15 @@ function NewEnemy(hp, speed, x, y)
 
         love.graphics.setLineWidth(5)
         love.graphics.applyTransform(transform)
-        love.graphics.setColor(1, 0, 0, 0.5)
-        love.graphics.rectangle("line", -self.size/2, -self.size/2, self.size, self.size)
+
+        if self.speed >= 3 then
+            love.graphics.setColor(1, 0.639, 0, 0.5)
+            love.graphics.circle("line", 0, 0, self.size/1.5, 3)
+        else
+            love.graphics.setColor(1, 0, 0, 0.5)
+            love.graphics.rectangle("line", -self.size/2, -self.size/2, self.size, self.size, 5, 5)
+        end
+
         love.graphics.applyTransform(transform:inverse())
 
 
@@ -41,8 +48,13 @@ function NewEnemy(hp, speed, x, y)
         love.graphics.stencil(mask, "replace", 1)
         love.graphics.setStencilTest("gequal", 1)
         love.graphics.applyTransform(transform)
-        love.graphics.setColor(1, 0, 0)
-        love.graphics.rectangle("line", -self.size/2, -self.size/2, self.size, self.size)
+        if self.speed >= 3 then
+            love.graphics.setColor(1, 0.639, 0)
+            love.graphics.circle("line", 0, 0, self.size/1.5, 3)
+        else
+            love.graphics.setColor(1, 0, 0)
+            love.graphics.rectangle("line", -self.size/2, -self.size/2, self.size, self.size, 5, 5)
+        end
         love.graphics.applyTransform(transform:inverse())
         love.graphics.setStencilTest()
 
