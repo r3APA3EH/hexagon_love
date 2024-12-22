@@ -20,8 +20,8 @@ function NewBullet(isShotByPlayer ,x, y, angle, xDirection, yDirection, speed, d
             local dx = math.sin(self.angle)*self.speed * self.xDirection
             local dy = math.cos(self.angle)*self.speed * self.yDirection
 
-            self.x = self.x + dx * DeltaTime
-            self.y = self.y + dy * DeltaTime
+            self.x = self.x + dx * DeltaTime * 60
+            self.y = self.y + dy * DeltaTime * 60
         end,
         UpdateState = function (self)
             if IsOnTheEdge(self.x, self.y, self.size) then

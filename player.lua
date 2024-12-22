@@ -115,7 +115,7 @@ function NewPlayer()
             yDirection = yDirection * -1
         end
 
-        table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, xDirection, yDirection, 1000, 1))
+        table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, xDirection, yDirection, 30, 1))
 
         self.canFire = false
         self.fireCooldown = 0

@@ -8,6 +8,7 @@ function love.focus(f) GameIsPaused = not f end
 function love.load()
     ShowHitboxes = true
     love.graphics.setLineStyle("smooth")
+    love.graphics.setLineJoin("bevel")
 
     Player = NewPlayer()
 
@@ -24,6 +25,7 @@ end
 function love.update(dt)
     DeltaTime = dt
     if GameIsPaused then return end
+
     Player:Move()
 
     for i=1, #Enemies do
@@ -37,6 +39,10 @@ function love.update(dt)
     
     for i=1, #Bullets do
         Bullets[i]:UpdateState()
+    end
+
+    for i=1, #Enemies do
+        Enemies[i]:UpdateState()
     end
 
     DeleteRedundantObjects()
@@ -55,11 +61,6 @@ function love.update(dt)
     --     Bullets[i]:Move()
     -- end
 end
-function love.mousepressed(x, y, button, istouch, presses )
-    if button == 1 then
-        Player:Fire()
-    end
-end
 function love.draw()
     love.graphics.print(love.timer.getFPS())
     love.graphics.print(#Bullets, 0, 30)
@@ -73,4 +74,9 @@ function love.draw()
     end
 
     Player:Draw()
+end
+function love.mousepressed(x, y, button, istouch, presses)
+    if button == 1 then
+        Player:Fire()
+    end
 end
