@@ -106,16 +106,16 @@ function NewPlayer()
 
         local angle = math.asin(math.abs((mx - self.x)/math.sqrt((mx - self.x)^2 + (my - self.y)^2)))
 
-        -- local xDirection = 1
-        -- local yDirection = 1
-        -- if self.x > mx then
-        --     xDirection = xDirection * -1
-        -- end
-        -- if self.y > my then
-        --     yDirection = yDirection * -1
-        -- end
+        local xDirection = 1
+        local yDirection = 1
+        if self.x > mx then
+            xDirection = xDirection * -1
+        end
+        if self.y > my then
+            yDirection = yDirection * -1
+        end
 
-        table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, 100, 1))
+        table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, xDirection, yDirection, 1000, 1))
 
         self.canFire = false
         self.fireCooldown = 0
@@ -168,7 +168,7 @@ function NewEnemy(hp, speed, x, y)
     }
 end
 
-function NewBullet(isShotByPlayer ,x, y, angle, speed, damage)
+function NewBullet(isShotByPlayer ,x, y, angle, xDirection, yDirection, speed, damage)
     local size = 4
     return {
         isShotByPlayer = isShotByPlayer,
@@ -176,6 +176,8 @@ function NewBullet(isShotByPlayer ,x, y, angle, speed, damage)
         y = y,
         size = size,
         angle = angle,
+        xDirection = xDirection,
+        yDirection = yDirection,
         speed = speed,
         damage = damage,
         Draw = function (self)
@@ -185,8 +187,8 @@ function NewBullet(isShotByPlayer ,x, y, angle, speed, damage)
         end,
         Move = function (self)
 
-            local dx = math.sin(self.angle)*self.speed --* self.xDirection
-            local dy = math.cos(self.angle)*self.speed --* self.yDirection
+            local dx = math.sin(self.angle)*self.speed * self.xDirection
+            local dy = math.cos(self.angle)*self.speed * self.yDirection
 
             self.x = self.x + dx * DeltaTime
             self.y = self.y + dy * DeltaTime
