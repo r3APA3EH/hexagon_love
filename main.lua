@@ -185,15 +185,15 @@ function NewBullet(isShotByPlayer ,x, y, angle, speed, damage)
         end,
         Move = function (self)
 
-            local dx = math.sin(self.angle)*self.speed * self.xDirection
-            local dy = math.cos(self.angle)*self.speed * self.yDirection
+            local dx = math.sin(self.angle)*self.speed --* self.xDirection
+            local dy = math.cos(self.angle)*self.speed --* self.yDirection
 
             self.x = self.x + dx * DeltaTime
             self.y = self.y + dy * DeltaTime
         end,
         UpdateState = function (self)
             if IsOnTheEdge(self.x, self.y, self.size) then
-                DestroyObjectByIndex(Bullets, IndexOf(Bullets, self))
+                table.insert(BulletsToDelete, self)
             end
         end,
         GetHitbox = function (self)
@@ -216,6 +216,7 @@ function love.load()
     table.insert(Enemies, #Enemies + 1, NewEnemy(10, 1, 500, 500))
 
     Bullets = {}
+    BulletsToDelete = {}
     
 end
 
@@ -236,6 +237,8 @@ function love.update(dt)
     for i=1, #Bullets do
         Bullets[i]:UpdateState()
     end
+
+    DeleteRedundantObjects()
 
     -- Player.canFireTimer = Player.canFireTimer + dt
     -- if Player.canFireTimer > 1 then
@@ -320,4 +323,11 @@ function IndexOf(array, value)
         end
     end
     return nil
+end
+
+function DeleteRedundantObjects()
+    for i=1, #BulletsToDelete do
+        DestroyObjectByIndex(Bullets, IndexOf(Bullets, BulletsToDelete[i]))
+    end
+    BulletsToDelete = {}
 end
