@@ -1,6 +1,12 @@
-function NewEnemy(hp, speed, x, y)
+function NewEnemy()
 
     local size = 30
+    local hp, speed, x, y = math.random(5, 20), 
+                            1 + math.random()*5, 
+                            math.random(0,1) * love.graphics.getWidth(), 
+                            math.random(0,1) * love.graphics.getHeight()
+    
+    -- print(x, y)
 
     return 
     {
@@ -8,6 +14,8 @@ function NewEnemy(hp, speed, x, y)
     hp = hp,
     maxHp = hp,
     speed = speed,
+    sx = 0,
+    sy = 0,
     x = x,
     y = y,
     size = size,
@@ -84,8 +92,37 @@ function NewEnemy(hp, speed, x, y)
             dy = dy * -1
         end
 
-        self.x = self.x + dx * DeltaTime * 60
-        self.y = self.y + dy * DeltaTime * 60
+        -- self.x = self.x + dx * DeltaTime * 60
+        -- self.y = self.y + dy * DeltaTime * 60
+        for i=1, #Enemies do
+            if Enemies[i] == self then goto continue end
+            local distanceToOthers = math.sqrt((Enemies[i].x - self.x)^2 + (Enemies[i].y - self.y)^2)
+            if distanceToOthers > self.size*1.5 then goto continue end
+            
+            local newAngleToEnemy = math.asin(math.abs((Enemies[i].x - self.x)/distanceToOthers))
+
+            local ddx = -math.sin(newAngleToEnemy)*self.speed/2
+            local ddy = -math.cos(newAngleToEnemy)*self.speed/2
+
+            if Enemies[i].x < self.x then
+                ddx = ddx * -1
+            end
+            if Enemies[i].y < self.y then
+                ddy = ddy * -1
+            end
+            
+            dx = dx + ddx
+            dy = dy + ddy
+
+            ::continue::
+        end
+
+        self.sx = self.sx * 0.5 + dx
+        self.sy = self.sy * 0.5 + dy
+
+        self.x = self.x + self.sx * DeltaTime * 60
+        self.y = self.y + self.sy * DeltaTime * 60
+
     end,
     GetHitbox = function (self)
         return self.x - self.size/2, self.y - self.size/2, self.size, self.size

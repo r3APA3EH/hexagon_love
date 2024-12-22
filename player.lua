@@ -100,7 +100,7 @@ function NewPlayer()
 
 
         Player.canFireTimer = Player.canFireTimer + DeltaTime
-        if Player.canFireTimer > 0.5 then
+        if Player.canFireTimer > 0.01 then
             Player.canFireTimer = 0
             Player.canFire = true
         end

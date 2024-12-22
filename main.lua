@@ -14,6 +14,7 @@ function love.focus(f) GameIsPaused = not f end
 
 function love.load()
     ShowHitboxes = false
+    love.window.setVSync(0)
 
     EnemySpawnCooldown = math.random(2, 5)
     TimeFromLastEnemySpawn = 0
@@ -25,10 +26,13 @@ function love.load()
 
 
     Enemies = {}
-    table.insert(Enemies, #Enemies + 1, NewEnemy(10, 2, 100, 100))
-    table.insert(Enemies, #Enemies + 1, NewEnemy(10, 1, 500, 500))
+    math.randomseed(tonumber(tostring(1):reverse():sub(1, 9)))
+    table.insert(Enemies, #Enemies + 1, NewEnemy())
+    math.randomseed(tonumber(tostring(3):reverse():sub(1, 9)))
+    table.insert(Enemies, #Enemies + 1, NewEnemy())
 
     Bullets = {}
+
     
 end
 
@@ -64,13 +68,14 @@ function love.update(dt)
     TimeFromLastEnemySpawn = TimeFromLastEnemySpawn + dt
 
     if TimeFromLastEnemySpawn >= EnemySpawnCooldown then
-        table.insert(Enemies, #Enemies + 1, NewEnemy(math.random(5, 20), 1 + math.random()*5, math.random(0,1) * love.graphics.getWidth(), math.random(0,1) * love.graphics.getHeight()))
+        table.insert(Enemies, #Enemies + 1, NewEnemy())
         TimeFromLastEnemySpawn = 0
-        EnemySpawnCooldown = math.random()*5
+        EnemySpawnCooldown = math.random()
     end
 end
 function love.draw()
     love.graphics.print(love.timer.getFPS())
+    love.graphics.print(#Enemies, 0, 50)
 
     for i=1, #Enemies do
         Enemies[i]:Draw()
@@ -82,7 +87,7 @@ function love.draw()
 
     Player:Draw()
 
-
+    -- arrow
     -- love.graphics.ellipse("fill", 100, 100, 50, 55, 3)
     -- love.graphics.rectangle("fill", 25, 75, 75, 50, 3, 10, 10)
 end
