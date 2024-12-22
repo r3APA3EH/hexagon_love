@@ -59,7 +59,7 @@ function love.update(dt)
     TimeFromLastEnemySpawn = TimeFromLastEnemySpawn + dt
 
     if TimeFromLastEnemySpawn >= EnemySpawnCooldown then
-        table.insert(Enemies, #Enemies + 1, NewEnemy(math.random(5, 20), math.random(1, 4), math.random(0, love.graphics.getWidth()), math.random(0, love.graphics.getHeight())))
+        table.insert(Enemies, #Enemies + 1, NewEnemy(math.random(5, 20), math.random(1, 4), math.random(0,1) * love.graphics.getWidth(), math.random(0,1) * love.graphics.getHeight()))
         TimeFromLastEnemySpawn = 0
         EnemySpawnCooldown = math.random(2, 5)
     end
