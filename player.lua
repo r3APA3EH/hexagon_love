@@ -7,9 +7,6 @@ function NewPlayer()
     size = size,
     x = love.graphics.getWidth()/2,
     y = love.graphics.getHeight()/2,
-    GetHitbox = function (self)
-        return self.x - size/2, self.y - size/2, size, size
-    end,
     isColliding = false,
     collideCooldown = 0,
     maxHp = 10,
@@ -18,6 +15,9 @@ function NewPlayer()
     canFire = true,
     canFireTimer = 0,
     fireCooldown = 0,
+    GetHitbox = function (self)
+        return self.x - size/2, self.y - size/2, size, size
+    end,
     Draw = function (self)
         love.graphics.setLineWidth(5)
         love.graphics.setColor(1, 1, 1, 0.5)
