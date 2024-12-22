@@ -66,7 +66,7 @@ function NewPlayer()
     UpdateState = function (self)
         -- firing
         self.fireCooldown = self.fireCooldown + DeltaTime
-        if self.fireCooldown >= 1 then
+        if self.fireCooldown >= 0.5 then
             self.fireCooldown = 0
             self.canFire = true
         end

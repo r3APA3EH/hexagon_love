@@ -36,13 +36,26 @@ function IndexOf(array, value)
 end
 
 function DeleteRedundantObjects()
+    local BulletsToDelete = {}
+    local EnemiesToDelete = {}
+
+    for i=1, #Bullets do
+        if not Bullets[i].isAlive then
+            table.insert(BulletsToDelete, Bullets[i])
+        end
+    end
+
+    for i=1, #Enemies do
+        if not Enemies[i].isAlive then
+            table.insert(EnemiesToDelete, Enemies[i])
+        end
+    end
+
     for i=1, #BulletsToDelete do
         DestroyObjectByIndex(Bullets, IndexOf(Bullets, BulletsToDelete[i]))
     end
-    BulletsToDelete = {}
 
     for i=1, #EnemiesToDelete do
         DestroyObjectByIndex(Enemies, IndexOf(Enemies, EnemiesToDelete[i]))
     end
-    EnemiesToDelete = {}
 end

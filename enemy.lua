@@ -4,6 +4,7 @@ function NewEnemy(hp, speed, x, y)
 
     return 
     {
+    isAlive = true,
     hp = hp,
     maxHp = hp,
     speed = speed,
@@ -94,17 +95,18 @@ function NewEnemy(hp, speed, x, y)
             self.isColliding = CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
             if self.isColliding then 
                 self.hp = self.hp - Bullets[i].damage
+                if self.hp < 0 then self.hp = 0 end
+                if self.hp == 0 then
+                    self.isAlive = false
+                end
+                
                 self.collideCooldown = self.collideCooldown + DeltaTime
                 break
             end
         
         end
 
-        if self.hp < 0 then self.hp = 0 end
-
-        if self.hp == 0 then
-            table.insert(EnemiesToDelete, self)
-        end
+        
     end
     }
 end

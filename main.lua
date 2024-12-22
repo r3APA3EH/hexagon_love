@@ -18,12 +18,10 @@ function love.load()
 
 
     Enemies = {}
-    EnemiesToDelete = {}
     table.insert(Enemies, #Enemies + 1, NewEnemy(10, 2, 100, 100))
     table.insert(Enemies, #Enemies + 1, NewEnemy(10, 1, 500, 500))
 
     Bullets = {}
-    BulletsToDelete = {}
     
 end
 
@@ -59,14 +57,13 @@ function love.update(dt)
     TimeFromLastEnemySpawn = TimeFromLastEnemySpawn + dt
 
     if TimeFromLastEnemySpawn >= EnemySpawnCooldown then
-        table.insert(Enemies, #Enemies + 1, NewEnemy(math.random(5, 20), math.random(1, 4), math.random(0,1) * love.graphics.getWidth(), math.random(0,1) * love.graphics.getHeight()))
+        table.insert(Enemies, #Enemies + 1, NewEnemy(math.random(5, 20), 1 + math.random()*5, math.random(0,1) * love.graphics.getWidth(), math.random(0,1) * love.graphics.getHeight()))
         TimeFromLastEnemySpawn = 0
-        EnemySpawnCooldown = math.random(2, 5)
+        EnemySpawnCooldown = math.random()*5
     end
 end
 function love.draw()
     love.graphics.print(love.timer.getFPS())
-    love.graphics.print(#Bullets, 0, 30)
 
     for i=1, #Enemies do
         Enemies[i]:Draw()

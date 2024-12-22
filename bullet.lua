@@ -1,6 +1,7 @@
 function NewBullet(isShotByPlayer ,x, y, angle, xDirection, yDirection, speed, damage)
     local size = 4
     return {
+        isAlive = true,
         isShotByPlayer = isShotByPlayer,
         x = x,
         y = y,
@@ -25,7 +26,7 @@ function NewBullet(isShotByPlayer ,x, y, angle, xDirection, yDirection, speed, d
         end,
         UpdateState = function (self)
             if IsOnTheEdge(self.x, self.y, self.size) then
-                table.insert(BulletsToDelete, self)
+                self.isAlive = false
             end
         end,
         GetHitbox = function (self)
