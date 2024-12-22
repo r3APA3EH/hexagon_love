@@ -60,10 +60,8 @@ function NewPlayer()
             dx = dx - self.speed * DeltaTime * 60
         end
 
-        if IsOnTheEdge(self.x + dx, self.y + dy, self.size) then return end
-
-        self.x = self.x + dx
-        self.y = self.y + dy
+        if not IsOnTheEdge(self.x + dx, self.y, self.size) then self.x = self.x + dx end
+        if not IsOnTheEdge(self.x, self.y + dy, self.size) then self.y = self.y + dy end
     end,
     UpdateState = function (self)
         -- firing
