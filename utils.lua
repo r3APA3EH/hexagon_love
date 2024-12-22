@@ -40,4 +40,9 @@ function DeleteRedundantObjects()
         DestroyObjectByIndex(Bullets, IndexOf(Bullets, BulletsToDelete[i]))
     end
     BulletsToDelete = {}
+
+    for i=1, #EnemiesToDelete do
+        DestroyObjectByIndex(Enemies, IndexOf(Enemies, EnemiesToDelete[i]))
+    end
+    EnemiesToDelete = {}
 end

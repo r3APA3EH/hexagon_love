@@ -13,6 +13,7 @@ function NewEnemy(hp, speed, x, y)
     angle = 0,
     isColliding = false,
     collideCooldown = 0,
+    saveTime = 0.1,
     Draw = function (self)
         love.graphics.setLineWidth(5)
 
@@ -49,10 +50,10 @@ function NewEnemy(hp, speed, x, y)
         DrawHitbox({self:GetHitbox()})
 
         -- variable preview
-        love.graphics.setColor(0, 1, 0)
-        love.graphics.print(tostring(self.isColliding), self.x, self.y - 40)
-        love.graphics.print(self.hp, self.x, self.y - 30)
-        love.graphics.print(self.collideCooldown, self.x, self.y +30)
+        -- love.graphics.setColor(0, 1, 0)
+        -- love.graphics.print(tostring(self.isColliding), self.x, self.y - 40)
+        -- love.graphics.print(self.hp, self.x, self.y - 30)
+        -- love.graphics.print(self.collideCooldown, self.x, self.y + 30)
         
     end,
     Move = function (self)
@@ -81,9 +82,9 @@ function NewEnemy(hp, speed, x, y)
         if self.collideCooldown > 0 then
             self.collideCooldown = self.collideCooldown + DeltaTime
         end
-        if self.collideCooldown >= 1 then self.collideCooldown = 0 end
+        if self.collideCooldown >= self.saveTime then self.collideCooldown = 0 end
         for i=1, #Bullets do
-            if 0 < self.collideCooldown and self.collideCooldown < 1 then 
+            if 0 < self.collideCooldown and self.collideCooldown < self.saveTime then 
                 self.isColliding = false 
                 break
             end
@@ -92,18 +93,18 @@ function NewEnemy(hp, speed, x, y)
             local x2,y2,w2,h2 = Bullets[i]:GetHitbox()
             self.isColliding = CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
             if self.isColliding then 
+                self.hp = self.hp - Bullets[i].damage
                 self.collideCooldown = self.collideCooldown + DeltaTime
                 break
             end
         
         end
 
-        if self.isColliding then
-            self.hp = self.hp - 1
-        end
-
         if self.hp < 0 then self.hp = 0 end
 
+        if self.hp == 0 then
+            table.insert(EnemiesToDelete, self)
+        end
     end
     }
 end

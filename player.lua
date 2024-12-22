@@ -16,6 +16,7 @@ function NewPlayer()
     hp = 10,
     speed = 5,
     canFire = true,
+    canFireTimer = 0,
     fireCooldown = 0,
     Draw = function (self)
         love.graphics.setLineWidth(5)
@@ -99,12 +100,20 @@ function NewPlayer()
 
         if self.hp < 0 then self.hp = 0 end
 
+
+        Player.canFireTimer = Player.canFireTimer + DeltaTime
+        if Player.canFireTimer > 0.5 then
+            Player.canFireTimer = 0
+            Player.canFire = true
+        end
+
     end,
     Fire = function (self)
-
+        if not self.canFire then return end
         local mx, my = love.mouse.getPosition()
 
         local angle = math.asin(math.abs((mx - self.x)/math.sqrt((mx - self.x)^2 + (my - self.y)^2)))
+        angle = angle + math.rad((math.random() - 0.5)*10)
 
         local xDirection = 1
         local yDirection = 1
@@ -115,7 +124,7 @@ function NewPlayer()
             yDirection = yDirection * -1
         end
 
-        table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, xDirection, yDirection, 30, 1))
+        table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, xDirection, yDirection, 30, 3))
 
         self.canFire = false
         self.fireCooldown = 0
