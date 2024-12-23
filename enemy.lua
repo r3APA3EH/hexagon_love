@@ -1,10 +1,20 @@
 function NewEnemy()
 
     local size = 30
-    local hp, speed, x, y = math.random(5, 20), 
-                            1 + math.random()*2, 
-                            math.random(0,1) * love.graphics.getWidth(), 
-                            math.random(0,1) * love.graphics.getHeight()
+    local hp, speed = math.random(5, 20), 1 + math.random()*3
+    local x, y
+
+    local side = math.random(1,4)
+
+    if side == 1 then
+        x, y = 0, math.random(0, love.graphics.getHeight())
+    elseif side == 2 then
+        x, y = math.random(0, love.graphics.getWidth()), 0
+    elseif side == 3 then
+        x, y = love.graphics.getWidth(), math.random(0, love.graphics.getHeight())
+    elseif side == 4 then
+        x, y = math.random(0, love.graphics.getWidth()), love.graphics.getHeight()
+    end
             
     local willToMoveToPlayer = math.random(0, 1)
     -- print(x, y)
@@ -97,7 +107,6 @@ function NewEnemy()
     Move = function (self)
         local dx = 0
         local dy = 0
-        -- local nearEnemiesCount = 0
         for i=1, #Enemies do
             if Enemies[i].x == self.x then goto continue end
             if Enemies[i].y == self.y then goto continue end
@@ -141,24 +150,23 @@ function NewEnemy()
         dy = dy + ddy
 
 
-        -- if IsOnTheEdge(self.x, self.y, self.size) then
-        --     print "on the edge"
-        --     local distanceToCenter = math.sqrt((self.x)^2 + (self.y)^2)
-        --     local newAngleToCenter = math.asin(math.abs((self.x)/distanceToCenter))
+        if IsOnTheEdge(self.x, self.y, self.size) then
+            local distanceToCenter = math.sqrt((love.graphics.getWidth()/2 - self.x)^2 + (love.graphics.getHeight()/2 - self.y)^2)
+            local newAngleToCenter = math.asin(math.abs((love.graphics.getWidth()/2 - self.x)/distanceToCenter))
 
-        --     local ddx1 = math.sin(newAngleToCenter)*self.speed
-        --     local ddy1 = math.cos(newAngleToCenter)*self.speed
+            local ddx1 = math.sin(newAngleToCenter)*self.speed
+            local ddy1 = math.cos(newAngleToCenter)*self.speed
 
-        --     if 0 < self.x then
-        --         ddx1 = ddx1 * -1
-        --     end
-        --     if 0 < self.y then
-        --         ddy1 = ddy1 * -1
-        --     end
+            if love.graphics.getWidth()/2 < self.x then
+                ddx1 = ddx1 * -1
+            end
+            if love.graphics.getHeight()/2 < self.y then
+                ddy1 = ddy1 * -1
+            end
             
-        --     dx = dx + ddx1
-        --     dy = dy + ddy1
-        -- end
+            dx = dx + ddx1
+            dy = dy + ddy1
+        end
 
         
         self.sx = self.sx * 0.5 + dx

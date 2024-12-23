@@ -75,18 +75,22 @@ function love.update(dt)
     end
 end
 function love.draw()
+    love.graphics.setColor(0,1,0)
     love.graphics.print(love.timer.getFPS())
     love.graphics.print(#Enemies, 0, 50)
-
-    for i=1, #Enemies do
-        Enemies[i]:Draw()
-    end
+    
+    Player:Draw()
 
     for i=1, #Bullets do
         Bullets[i]:Draw()
     end
+    for i=1, #Enemies do
+        Enemies[i]:Draw()
+    end
 
-    Player:Draw()
+    
+
+    
 
     -- arrow
     -- love.graphics.ellipse("fill", 100, 100, 50, 55, 3)
