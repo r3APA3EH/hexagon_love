@@ -2,6 +2,7 @@ require("player")
 require("enemy")
 require("bullet")
 require("utils")
+require("camera")
 
 
 function love.keypressed( key, scancode, isrepeat )
@@ -16,6 +17,8 @@ function love.load()
     love.window.setMode(800, 600, {resizable=true, vsync=0, minwidth=400, minheight=300})
     ShowHitboxes = false
     love.window.setVSync(0)
+
+    Camera = NewCamera()
 
     EnemySpawnCooldown = math.random(2, 5)
     TimeFromLastEnemySpawn = 0
@@ -44,7 +47,7 @@ function love.update(dt)
 
     DeltaTime = dt
     if GameIsPaused then return end
-
+    Camera:Move()
     Player:Move()
 
     for i=1, #Enemies do
@@ -75,11 +78,8 @@ function love.update(dt)
     end
 end
 function love.draw()
-    love.graphics.setColor(0,1,0)
-    love.graphics.print(love.timer.getFPS())
-    love.graphics.print(#Enemies, 0, 50)
-    
-    Player:Draw()
+    love.graphics.push()
+    love.graphics.applyTransform(Camera.transform)
 
     for i=1, #Bullets do
         Bullets[i]:Draw()
@@ -87,12 +87,23 @@ function love.draw()
     for i=1, #Enemies do
         Enemies[i]:Draw()
     end
-
+    Player:Draw()
     
+    -- love.graphics.applyTransform(Camera.transform)
 
+    love.graphics.polygon("line", Camera.x, Camera.y, love.graphics.getWidth()+Camera.x, Camera.y, love.graphics.getWidth()+Camera.x, love.graphics.getHeight()+Camera.y, Camera.x, love.graphics.getHeight()+Camera.y)
+    -- love.graphics.applyTransform(Camera.transform:inverse())
     
 
     -- arrow
     -- love.graphics.ellipse("fill", 100, 100, 50, 55, 3)
     -- love.graphics.rectangle("fill", 25, 75, 75, 50, 3, 10, 10)
+    love.graphics.pop()
+    love.graphics.setColor(0,1,0)
+    love.graphics.print(love.timer.getFPS())
+    love.graphics.print(#Enemies, 0, 50)
+    love.graphics.print(Player.x, 0, 100)
+    love.graphics.print(Player.y, 200, 100)
+    love.graphics.print(Camera.x, 0, 150)
+    love.graphics.print(Camera.y, 200, 150)
 end

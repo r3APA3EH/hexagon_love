@@ -19,16 +19,18 @@ function NewPlayer()
         return self.x - size/2, self.y - size/2, size, size
     end,
     Draw = function (self)
+        -- love.graphics.push()
         love.graphics.setLineWidth(5)
         love.graphics.setColor(1, 1, 1, 0.5)
         love.graphics.circle("line", self.x, self.y, self.size/2)
         local mask = function ()
             local maskHeight = self.size/2 - (self.size / self.maxHp * self.hp)
             if self.hp == self.maxHp then maskHeight = maskHeight - 5 end
-            love.graphics.rectangle("fill", 0, self.y + maskHeight, love.graphics.getWidth(), love.graphics.getHeight())
+            love.graphics.rectangle("fill", Camera.x, self.y + maskHeight, love.graphics.getWidth(), love.graphics.getHeight())
         end
         love.graphics.stencil(mask, "replace", 1)
         love.graphics.setStencilTest("gequal", 1)
+        -- love.graphics.pop()
         love.graphics.setColor(1, 1, 1)
         love.graphics.circle("line", self.x, self.y, self.size/2)
         love.graphics.setStencilTest()
@@ -41,6 +43,19 @@ function NewPlayer()
         DrawHitbox({self:GetHitbox()})
     end,
     Move = function (self)
+
+        if IsOnTheEdge(self.x, self.y, self.size) then
+            if self.x - self.size/2 < Camera.x then
+                self.x = Camera.x + self.size/2
+            elseif self.x + self.size/2 > Camera.x + love.graphics.getWidth() then
+                self.x = Camera.x + love.graphics.getWidth() - self.size/2
+            end
+            if self.y - self.size/2 < Camera.y then
+                self.y = Camera.y + self.size/2
+            elseif self.y + self.size/2 > Camera.y + love.graphics.getHeight() then
+                self.y = Camera.y + love.graphics.getHeight() - self.size/2
+            end
+        end
 
         if love.keyboard.isDown('lshift') then self.speed = 10 else self.speed = 5 end
 
@@ -61,7 +76,7 @@ function NewPlayer()
         end
 
         if not IsOnTheEdge(self.x + dx, self.y, self.size) then self.x = self.x + dx end
-        if not IsOnTheEdge(self.x, self.y + dy, self.size) then self.y = self.y + dy end
+        if not IsOnTheEdge(self.x, self.y + dy, self.size) then self.y = self.y + dy end  
     end,
     UpdateState = function (self)
         -- firing
@@ -100,7 +115,7 @@ function NewPlayer()
 
 
         Player.canFireTimer = Player.canFireTimer + DeltaTime
-        if Player.canFireTimer > 0.01 then
+        if Player.canFireTimer > 0.2 then
             Player.canFireTimer = 0
             Player.canFire = true
         end
@@ -109,6 +124,8 @@ function NewPlayer()
     Fire = function (self)
         if not self.canFire then return end
         local mx, my = love.mouse.getPosition()
+        mx  = mx + Camera.x
+        my = my + Camera.y
 
         local angle = math.asin(math.abs((mx - self.x)/math.sqrt((mx - self.x)^2 + (my - self.y)^2)))
         angle = angle + math.rad((math.random() - 0.5)*10)
@@ -122,7 +139,7 @@ function NewPlayer()
             yDirection = yDirection * -1
         end
 
-        table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, xDirection, yDirection, 30, 3))
+        table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, xDirection, yDirection, 30, 1))
 
         self.canFire = false
         self.fireCooldown = 0

@@ -15,12 +15,12 @@ function DrawHitbox(hitbox)
 end
 
 function IsOnTheEdge(x, y, size)
-    local rightEdge = x + size/2 >= love.graphics.getWidth()
-    local leftEdge = x - size/2 <= 0
-    local bottomEdge = y + size/2 >= love.graphics.getHeight()
-    local topEdge = y - size/2 <= 0
-    if rightEdge or leftEdge or topEdge or bottomEdge then return true end
-    return false
+    local rightEdge = x + size/2 >= love.graphics.getWidth() + Camera.x
+    local leftEdge = x - size/2 <= 0 + Camera.x
+    local bottomEdge = y + size/2 >= love.graphics.getHeight() + Camera.y
+    local topEdge = y - size/2 <= 0 + Camera.y
+
+    return rightEdge or leftEdge or topEdge or bottomEdge
 end
 
 function DestroyObjectByIndex(space, pos)
