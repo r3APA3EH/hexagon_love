@@ -14,6 +14,7 @@ end
 function love.focus(f) GameIsPaused = not f end
 
 function love.load()
+    StartTime = love.timer.getTime()
     love.window.setMode(800, 600, {resizable=true, vsync=0, minwidth=400, minheight=300})
     ShowHitboxes = false
     love.window.setVSync(0)
