@@ -14,12 +14,14 @@ end
 function love.focus(f) GameIsPaused = not f end
 
 function love.load()
+    CurrentOS = love.system.getOS()
     StartTime = love.timer.getTime()
     love.window.setMode(800, 600, {resizable=true, vsync=0, minwidth=400, minheight=300})
     ShowHitboxes = false
     love.window.setVSync(0)
 
     Camera = NewCamera()
+    Background = NewBackground()
 
     EnemySpawnCooldown = math.random(2, 5)
     TimeFromLastEnemySpawn = 0
@@ -42,23 +44,23 @@ function love.load()
 end
 
 function love.update(dt)
-    if love.mouse.isDown(1) then
-        Player:Fire()
-    end
-
     DeltaTime = dt
     if GameIsPaused then return end
     Camera:Move()
-    Player:Move()
 
-    for i=1, #Enemies do
-        Enemies[i]:Move()
-    end
     for i=1, #Bullets do
         Bullets[i]:Move()
     end
 
-    Player:UpdateState()
+    for i=1, #Enemies do
+        Enemies[i]:Move()
+    end
+    table.sort(Enemies, function (a, b) return a.distanceToPlayer < b.distanceToPlayer end)
+
+    -- if love.mouse.isDown(1) then
+        Player:Move()
+    -- end
+    Player:Fire()
     
     for i=1, #Bullets do
         Bullets[i]:UpdateState()
@@ -67,6 +69,10 @@ function love.update(dt)
     for i=1, #Enemies do
         Enemies[i]:UpdateState()
     end
+
+    Player:UpdateState()
+
+    Background:Update()
 
     DeleteRedundantObjects()
 
@@ -92,19 +98,23 @@ function love.draw()
     
     -- love.graphics.applyTransform(Camera.transform)
 
-    love.graphics.polygon("line", Camera.x, Camera.y, love.graphics.getWidth()+Camera.x, Camera.y, love.graphics.getWidth()+Camera.x, love.graphics.getHeight()+Camera.y, Camera.x, love.graphics.getHeight()+Camera.y)
+    -- love.graphics.polygon("line", Camera.x, Camera.y, love.graphics.getWidth()+Camera.x, Camera.y, love.graphics.getWidth()+Camera.x, love.graphics.getHeight()+Camera.y, Camera.x, love.graphics.getHeight()+Camera.y)
     -- love.graphics.applyTransform(Camera.transform:inverse())
     
 
     -- arrow
     -- love.graphics.ellipse("fill", 100, 100, 50, 55, 3)
-    -- love.graphics.rectangle("fill", 25, 75, 75, 50, 3, 10, 10)
+    -- love.graphics.rectangle("fill", 25, 75, 75, 50, 3, 10, 10) 
     love.graphics.pop()
+
+    Background:Draw()
+
     love.graphics.setColor(0,1,0)
     love.graphics.print(love.timer.getFPS())
     love.graphics.print(#Enemies, 0, 50)
-    love.graphics.print(Player.x, 0, 100)
-    love.graphics.print(Player.y, 200, 100)
-    love.graphics.print(Camera.x, 0, 150)
-    love.graphics.print(Camera.y, 200, 150)
+    -- love.graphics.print(Player.x, 0, 100)
+    -- love.graphics.print(Player.y, 200, 100)
+    -- love.graphics.print(Camera.x, 0, 150)
+    -- love.graphics.print(Camera.y, 200, 150)
+
 end

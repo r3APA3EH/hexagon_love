@@ -1,7 +1,7 @@
 function NewEnemy()
 
     local size = 30
-    local hp, speed = math.random(1, 5), 1 + math.random()*3
+    local hp, speed = math.random(1, 5), 2 + math.random()*4
     local x, y
 
     local side = math.random(1,4)
@@ -17,7 +17,11 @@ function NewEnemy()
     end
     x = x + Camera.x
     y = y + Camera.y
-    local willToMoveToPlayer = math.random(0, 1)
+    local willToMoveToPlayer = 1
+    if math.random(1,4) == 4 then
+        willToMoveToPlayer = 0
+    end
+    
     -- print(x, y)
     local sizem = 0
 
@@ -37,6 +41,7 @@ function NewEnemy()
     sy = 0,
     x = x,
     y = y,
+    distanceToPlayer = 0,
     willToMoveToPlayer = willToMoveToPlayer,
     size = size + 30 * sizem,
     angle = 0,
@@ -91,6 +96,10 @@ function NewEnemy()
             love.graphics.setColor(0.639, 0.776, 1)
             love.graphics.circle("line", 0, 0, self.size/1.5, 6)
         end
+        if IndexOf(Enemies, self) == 1 then
+            love.graphics.setColor(0, 1, 0)
+            love.graphics.circle("line", 0, 0, self.size/1.5)
+        end
         love.graphics.applyTransform(transform:inverse())
         love.graphics.setStencilTest()
 
@@ -144,15 +153,15 @@ function NewEnemy()
 
             ::continue::
         end
-        local distanceToPlayer = math.sqrt((Player.x - self.x)^2 + (Player.y - self.y)^2)
-        local newAngle = math.asin(math.abs((Player.x - self.x)/distanceToPlayer))
+        self.distanceToPlayer = math.sqrt((Player.x - self.x)^2 + (Player.y - self.y)^2)
+        local newAngle = math.asin(math.abs((Player.x - self.x)/self.distanceToPlayer))
 
         self.angle = lerp(self.angle, newAngle, 0.1)
 
         local ddx = math.sin(self.angle)*self.speed * self.willToMoveToPlayer
         local ddy = math.cos(self.angle)*self.speed * self.willToMoveToPlayer
-        ddx = ddx - math.sin(self.angle)*self.speed * 7/(distanceToPlayer - self.size*0.8)
-        ddy = ddy - math.cos(self.angle)*self.speed * 7/(distanceToPlayer - self.size*0.8)
+        ddx = ddx - math.sin(self.angle)*self.speed * 7/(self.distanceToPlayer - self.size*0.8)
+        ddy = ddy - math.cos(self.angle)*self.speed * 7/(self.distanceToPlayer - self.size*0.8)
 
         if Player.x < self.x then
             ddx = ddx * -1

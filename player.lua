@@ -7,11 +7,12 @@ function NewPlayer()
     size = size,
     x = love.graphics.getWidth()/2,
     y = love.graphics.getHeight()/2,
+    angle = 0,
     isColliding = false,
     collideCooldown = 0,
     maxHp = 10,
     hp = 10,
-    speed = 5,
+    speed = 10,
     canFire = true,
     canFireTimer = 0,
     fireCooldown = 0,
@@ -44,6 +45,50 @@ function NewPlayer()
     end,
     Move = function (self)
 
+        local dx = 0
+        local dy = 0
+
+        -- if love.keyboard.isDown('lshift') then self.speed = 10 else self.speed = 5 end
+
+        -- if love.keyboard.isDown('s') then
+        --     dy = dy + self.speed * DeltaTime * 60
+        -- end
+        -- if love.keyboard.isDown('w') then
+        --     dy = dy - self.speed * DeltaTime * 60
+        -- end
+        -- if love.keyboard.isDown('d') then
+        --     dx = dx + self.speed * DeltaTime * 60
+        -- end
+        -- if love.keyboard.isDown('a') then
+        --     dx = dx - self.speed * DeltaTime * 60
+        -- end
+        local mx, my = love.mouse.getPosition()
+        mx  = mx + Camera.x
+        my = my + Camera.y
+
+        local distanceToCursor = math.sqrt((mx - self.x)^2 + (my - self.y)^2)
+        local newAngle = math.asin(math.abs((mx - self.x)/distanceToCursor))
+
+        self.angle = lerp(self.angle, newAngle, 0.1)
+
+        local ddx = math.sin(self.angle)*self.speed * DeltaTime * 60
+        local ddy = math.cos(self.angle)*self.speed * DeltaTime * 60
+
+        if mx < self.x then
+            ddx = ddx * -1
+        end
+        if my < self.y then
+            ddy = ddy * -1
+        end
+        
+        dx = dx + ddx
+        dy = dy + ddy
+
+
+        if not IsOnTheEdge(self.x + dx, self.y, self.size) then self.x = self.x + dx end
+        if not IsOnTheEdge(self.x, self.y + dy, self.size) then self.y = self.y + dy end  
+    end,
+    UpdateState = function (self)
         if IsOnTheEdge(self.x, self.y, self.size) then
             if self.x - self.size/2 < Camera.x then
                 self.x = Camera.x + self.size/2
@@ -56,29 +101,6 @@ function NewPlayer()
                 self.y = Camera.y + love.graphics.getHeight() - self.size/2
             end
         end
-
-        if love.keyboard.isDown('lshift') then self.speed = 10 else self.speed = 5 end
-
-        local dx = 0
-        local dy = 0
-
-        if love.keyboard.isDown('s') then
-            dy = dy + self.speed * DeltaTime * 60
-        end
-        if love.keyboard.isDown('w') then
-            dy = dy - self.speed * DeltaTime * 60
-        end
-        if love.keyboard.isDown('d') then
-            dx = dx + self.speed * DeltaTime * 60
-        end
-        if love.keyboard.isDown('a') then
-            dx = dx - self.speed * DeltaTime * 60
-        end
-
-        if not IsOnTheEdge(self.x + dx, self.y, self.size) then self.x = self.x + dx end
-        if not IsOnTheEdge(self.x, self.y + dy, self.size) then self.y = self.y + dy end  
-    end,
-    UpdateState = function (self)
         -- firing
         self.fireCooldown = self.fireCooldown + DeltaTime
         if self.fireCooldown >= 0.5 then
@@ -123,23 +145,28 @@ function NewPlayer()
     end,
     Fire = function (self)
         if not self.canFire then return end
-        local mx, my = love.mouse.getPosition()
-        mx  = mx + Camera.x
-        my = my + Camera.y
+        if #Enemies == 0 then return end
+        -- local mx, my = love.mouse.getPosition()
+        -- mx  = mx + Camera.x
+        -- my = my + Camera.y
 
-        local angle = math.asin(math.abs((mx - self.x)/math.sqrt((mx - self.x)^2 + (my - self.y)^2)))
-        angle = angle + math.rad((math.random() - 0.5)*10)
+        local enemyX, enemyY = Enemies[1].x, Enemies[1].y
 
         local xDirection = 1
         local yDirection = 1
-        if self.x > mx then
+        if self.x > enemyX then
             xDirection = xDirection * -1
         end
-        if self.y > my then
+        if self.y > enemyY then
             yDirection = yDirection * -1
         end
 
+        local angle = math.asin(math.abs((enemyX - self.x)/math.sqrt((enemyX - self.x)^2 + (enemyY - self.y)^2)))
+        angle = angle + math.rad((math.random() - 0.5)*10)
+
+        -- table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle - math.rad(10), xDirection, yDirection, 30, 1))
         table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, xDirection, yDirection, 30, 1))
+        -- table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle + math.rad(10), xDirection, yDirection, 30, 1))
 
         self.canFire = false
         self.fireCooldown = 0
