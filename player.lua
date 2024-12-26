@@ -7,6 +7,8 @@ function NewPlayer()
     size = size,
     x = love.graphics.getWidth()/2,
     y = love.graphics.getHeight()/2,
+    sx = 0,
+    sy = 0,
     angle = 0,
     isColliding = false,
     collideCooldown = 0,
@@ -71,8 +73,8 @@ function NewPlayer()
 
         self.angle = lerp(self.angle, newAngle, 0.1)
 
-        local ddx = math.sin(self.angle)*self.speed * DeltaTime * 60
-        local ddy = math.cos(self.angle)*self.speed * DeltaTime * 60
+        local ddx = math.sin(self.angle)*self.speed
+        local ddy = math.cos(self.angle)*self.speed
 
         if mx < self.x then
             ddx = ddx * -1
@@ -84,9 +86,11 @@ function NewPlayer()
         dx = dx + ddx
         dy = dy + ddy
 
+        self.sx = self.sx * 0.5 + dx
+        self.sy = self.sy * 0.5 + dy
 
-        if not IsOnTheEdge(self.x + dx, self.y, self.size) then self.x = self.x + dx end
-        if not IsOnTheEdge(self.x, self.y + dy, self.size) then self.y = self.y + dy end  
+        self.x = self.x + self.sx * DeltaTime * 60
+        self.y = self.y + self.sy * DeltaTime * 60
     end,
     UpdateState = function (self)
         if IsOnTheEdge(self.x, self.y, self.size) then

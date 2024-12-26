@@ -85,6 +85,7 @@ function love.update(dt)
     end
 end
 function love.draw()
+    Background:Draw()
     love.graphics.push()
     love.graphics.applyTransform(Camera.transform)
 
@@ -106,8 +107,6 @@ function love.draw()
     -- love.graphics.ellipse("fill", 100, 100, 50, 55, 3)
     -- love.graphics.rectangle("fill", 25, 75, 75, 50, 3, 10, 10) 
     love.graphics.pop()
-
-    Background:Draw()
 
     love.graphics.setColor(0,1,0)
     love.graphics.print(love.timer.getFPS())

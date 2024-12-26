@@ -10,7 +10,7 @@ function NewCamera()
     speed = 0,
     Move = function (self)
         self.speed = love.math.noise((love.timer.getTime()+self.seed+1000)/10)*5
-        print(self.speed)
+        -- print(self.speed)
         local dx, dy, dr = self:GetDeltas()
         -- print (math.deg(dr))
 
