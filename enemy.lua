@@ -21,8 +21,6 @@ function NewEnemy()
     if math.random(1,4) == 4 then
         willToMoveToPlayer = 0
     end
-    
-    -- print(x, y)
     local sizem = 0
 
     if willToMoveToPlayer == 0 then
@@ -31,7 +29,7 @@ function NewEnemy()
         sizem = 0
     end
 
-    return 
+    return
     {
     isAlive = true,
     hp = hp,
@@ -52,11 +50,6 @@ function NewEnemy()
         love.graphics.setLineWidth(5)
 
         local transform = love.math.newTransform(self.x, self.y, self.angle)
-        -- love.graphics.applyTransform(transform)
-        -- love.graphics.setColor(1, 0, 0)
-        -- love.graphics.rectangle("line", -self.size/2, -self.size/2, self.size, self.size)
-        -- love.graphics.applyTransform(transform:inverse())
-
 
         love.graphics.setLineWidth(5)
         love.graphics.applyTransform(transform)
@@ -106,13 +99,6 @@ function NewEnemy()
 
 
         DrawHitbox({self:GetHitbox()})
-
-        -- variable preview
-        -- love.graphics.setColor(0, 1, 0)
-        -- love.graphics.print(tostring(self.isColliding), self.x, self.y - 40)
-        -- love.graphics.print(self.hp, self.x, self.y - 30)
-        -- love.graphics.print(self.collideCooldown, self.x, self.y + 30)
-        
     end,
     Move = function (self)
         if IsOnTheEdge(self.x, self.y, self.size) then
@@ -134,8 +120,6 @@ function NewEnemy()
             if Enemies[i].y == self.y then goto continue end
             local distanceToOthers = math.sqrt((Enemies[i].x - self.x)^2 + (Enemies[i].y - self.y)^2)
             if distanceToOthers > self.size*3 then goto continue end
-            -- nearEnemiesCount = nearEnemiesCount + 1
-            
             local newAngleToEnemy = math.asin(math.abs((Enemies[i].x - self.x)/distanceToOthers))
 
             local ddx = -math.sin(newAngleToEnemy)*self.speed* 7/(distanceToOthers - self.size*1.1)

@@ -33,14 +33,12 @@ function NewPlayer()
         end
         love.graphics.stencil(mask, "replace", 1)
         love.graphics.setStencilTest("gequal", 1)
-        -- love.graphics.pop()
         love.graphics.setColor(1, 1, 1)
         love.graphics.circle("line", self.x, self.y, self.size/2)
         love.graphics.setStencilTest()
 
         -- variable preview
         love.graphics.setColor(0, 1, 0)
-        -- love.graphics.print(tostring(self.isColliding), self.x, self.y - 30)
         love.graphics.print(self.hp, self.x, self.y - 30)
 
         DrawHitbox({self:GetHitbox()})
@@ -49,21 +47,6 @@ function NewPlayer()
 
         local dx = 0
         local dy = 0
-
-        -- if love.keyboard.isDown('lshift') then self.speed = 10 else self.speed = 5 end
-
-        -- if love.keyboard.isDown('s') then
-        --     dy = dy + self.speed * DeltaTime * 60
-        -- end
-        -- if love.keyboard.isDown('w') then
-        --     dy = dy - self.speed * DeltaTime * 60
-        -- end
-        -- if love.keyboard.isDown('d') then
-        --     dx = dx + self.speed * DeltaTime * 60
-        -- end
-        -- if love.keyboard.isDown('a') then
-        --     dx = dx - self.speed * DeltaTime * 60
-        -- end
         local mx, my = love.mouse.getPosition()
         mx  = mx + Camera.x
         my = my + Camera.y

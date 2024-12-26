@@ -10,9 +10,7 @@ function NewCamera()
     speed = 0,
     Move = function (self)
         self.speed = love.math.noise((love.timer.getTime()+self.seed+1000)/10)*5
-        -- print(self.speed)
         local dx, dy, dr = self:GetDeltas()
-        -- print (math.deg(dr))
 
         self.transform:translate(dx, dy)
 
@@ -36,7 +34,6 @@ function NewBackground()
     offsetX = 0,
     offsetY = 0,
     Draw = function (self)
-        -- print(self.offset)
         love.graphics.setColor(1,1,1,0.1)
         for width=-100, love.graphics.getWidth() + 100, 100 do
             for height=-100, love.graphics.getHeight() + 100, 100 do
