@@ -1,7 +1,7 @@
 function NewEnemy()
 
     local size = 30
-    local hp, speed = math.random(1, 5), 2 + math.random()*4
+    local hp, speed = math.random(1, 10), 2 + math.random()*4
     local x, y
 
     local side = math.random(1,4)
@@ -18,8 +18,9 @@ function NewEnemy()
     x = x + Camera.x
     y = y + Camera.y
     local willToMoveToPlayer = 1
-    if math.random(1,4) == 4 then
+    if math.random(1,3) == 1 then
         willToMoveToPlayer = 0
+        hp = hp * 2
     end
     local sizem = 0
 
@@ -89,8 +90,9 @@ function NewEnemy()
             love.graphics.setColor(0.639, 0.776, 1)
             love.graphics.circle("line", 0, 0, self.size/1.5, 6)
         end
-        if IndexOf(Enemies, self) == 1 then
+        if IndexOf(Enemies, self) <= 4 then
             love.graphics.setColor(0, 1, 0)
+            love.graphics.setLineWidth(3)
             love.graphics.circle("line", 0, 0, self.size/1.5)
         end
         love.graphics.applyTransform(transform:inverse())

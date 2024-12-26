@@ -19,7 +19,7 @@ function NewPlayer()
     canFireTimer = 0,
     fireCooldown = 0,
     GetHitbox = function (self)
-        return self.x - size/2, self.y - size/2, size, size
+        return self.x - self.size/2, self.y - self.size/2, self.size, self.size
     end,
     Draw = function (self)
         -- love.graphics.push()
@@ -38,8 +38,8 @@ function NewPlayer()
         love.graphics.setStencilTest()
 
         -- variable preview
-        love.graphics.setColor(0, 1, 0)
-        love.graphics.print(self.hp, self.x, self.y - 30)
+        -- love.graphics.setColor(0, 1, 0)
+        -- love.graphics.print(self.hp, self.x, self.y - 30)
 
         DrawHitbox({self:GetHitbox()})
     end,
@@ -55,6 +55,10 @@ function NewPlayer()
         local newAngle = math.asin(math.abs((mx - self.x)/distanceToCursor))
 
         self.angle = lerp(self.angle, newAngle, 0.1)
+        self.speed = 10
+        if distanceToCursor < self.speed then
+            self.speed = distanceToCursor
+        end
 
         local ddx = math.sin(self.angle)*self.speed
         local ddy = math.cos(self.angle)*self.speed
@@ -118,13 +122,19 @@ function NewPlayer()
 
         if self.isColliding then
             self.hp = self.hp - 1
+            if self.hp < 0 then self.hp = 0 end 
         end
 
-        if self.hp < 0 then self.hp = 0 end
+        if self.hp == 0 then
+            GameState.state.menu = true
+            GameState.state.running = false
+        end
+
+        
 
 
         Player.canFireTimer = Player.canFireTimer + DeltaTime
-        if Player.canFireTimer > 0.2 then
+        if Player.canFireTimer > 0.4 then
             Player.canFireTimer = 0
             Player.canFire = true
         end
@@ -132,28 +142,29 @@ function NewPlayer()
     end,
     Fire = function (self)
         if not self.canFire then return end
-        if #Enemies == 0 then return end
-        -- local mx, my = love.mouse.getPosition()
-        -- mx  = mx + Camera.x
-        -- my = my + Camera.y
 
-        local enemyX, enemyY = Enemies[1].x, Enemies[1].y
+        local fire = function (index)
+            if #Enemies < index then return end
+            local enemyX, enemyY = Enemies[index].x, Enemies[index].y
 
-        local xDirection = 1
-        local yDirection = 1
-        if self.x > enemyX then
-            xDirection = xDirection * -1
+            local xDirection = 1
+            local yDirection = 1
+            if self.x > enemyX then
+                xDirection = xDirection * -1
+            end
+            if self.y > enemyY then
+                yDirection = yDirection * -1
+            end
+
+            local angle = math.asin(math.abs((enemyX - self.x)/math.sqrt((enemyX - self.x)^2 + (enemyY - self.y)^2)))
+            angle = angle + math.rad((math.random() - 0.5)*10)
+
+            table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, xDirection, yDirection, 30, 1))
         end
-        if self.y > enemyY then
-            yDirection = yDirection * -1
+
+        for i=1, 4 do
+            fire(i)
         end
-
-        local angle = math.asin(math.abs((enemyX - self.x)/math.sqrt((enemyX - self.x)^2 + (enemyY - self.y)^2)))
-        angle = angle + math.rad((math.random() - 0.5)*10)
-
-        -- table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle - math.rad(10), xDirection, yDirection, 30, 1))
-        table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, xDirection, yDirection, 30, 1))
-        -- table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle + math.rad(10), xDirection, yDirection, 30, 1))
 
         self.canFire = false
         self.fireCooldown = 0

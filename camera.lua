@@ -34,10 +34,23 @@ function NewBackground()
     offsetX = 0,
     offsetY = 0,
     Draw = function (self)
-        love.graphics.setColor(1,1,1,0.1)
+        love.graphics.setLineWidth(5)
+        local segments = 2 + math.ceil(love.math.noise((love.timer.getTime()/10))*6)
         for width=-100, love.graphics.getWidth() + 100, 100 do
             for height=-100, love.graphics.getHeight() + 100, 100 do
-                love.graphics.circle("line", width + self.offsetX, height + self.offsetY, 10)
+                love.graphics.setColor(1,1,1,0.15)
+                if Player ~= nil then
+                    local x = width + self.offsetX
+                    local y = height + self.offsetY
+                    local distanceToPlayer = math.sqrt((Player.x - x - Camera.x)^2 + (Player.y - y -Camera.y)^2) *7.5
+                    local increment = distanceToPlayer/math.sqrt((love.graphics.getWidth())^2 + (love.graphics.getHeight())^2)
+                    -- print(increment)
+
+                    love.graphics.setColor(increment, increment, 1, 0.15 + 0.0333/increment)
+                end
+                
+
+                love.graphics.circle("line", width + self.offsetX, height + self.offsetY, 10, segments)
             end
         end
     end,
