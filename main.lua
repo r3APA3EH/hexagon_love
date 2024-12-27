@@ -32,7 +32,7 @@ function love.load()
     love.window.setVSync(0)
 
     love.graphics.setLineStyle("smooth")
-    love.graphics.setLineJoin("bevel")
+    love.graphics.setLineJoin("miter")
     MenuSetup()
 
     Camera = NewCamera()

@@ -43,12 +43,12 @@ MenuSetup = function ()
     -- At start time:
 end
 
-function love.mousepressed( x, y, button, istouch, presses )
-    if button == 1 then
-        ps:start()
-        ps:emit(16)
-    end
-end
+-- function love.mousepressed( x, y, button, istouch, presses )
+--     if button == 1 then
+--         ps:start()
+--         ps:emit(16)
+--     end
+-- end
 
 MainSetup = function ()
 
@@ -64,6 +64,7 @@ MainSetup = function ()
     table.insert(Enemies, #Enemies + 1, NewEnemy())
 
     Bullets = {}
+    LastRespawnTime = math.floor(love.timer.getTime())
 end
 
 MainLoop = function ()
@@ -129,6 +130,7 @@ function MainDraw()
     
     love.graphics.setColor(0,1,0)
     love.graphics.print(love.timer.getFPS())
+    love.graphics.printf(math.floor(love.timer.getTime()) - LastRespawnTime, love.graphics.getWidth()/2, 30, 100, "left", 0, 3, 3)
     love.graphics.print(#Enemies, 0, 50)
     -- love.graphics.print(Player.x, 0, 100)
     -- love.graphics.print(Player.y, 200, 100)

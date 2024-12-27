@@ -9,7 +9,7 @@ function NewCamera()
     rotation = 0,
     speed = 0,
     Move = function (self)
-        self.speed = love.math.noise((love.timer.getTime()+self.seed+1000)/10)*6
+        self.speed = love.math.noise((love.timer.getTime()+self.seed+100000)/10)*6
         local dx, dy, dr = self:GetDeltas()
 
         self.transform:translate(dx, dy)
@@ -51,7 +51,7 @@ function NewBackground()
                 end
                 
 
-                love.graphics.circle("line", width + self.offsetX, height + self.offsetY, 10, segments)
+                love.graphics.circle("line", width + self.offsetX, height + self.offsetY, 10)
             end
         end
     end,

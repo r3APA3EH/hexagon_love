@@ -45,6 +45,7 @@ function NewEnemy()
     return
     {
     isAlive = true,
+    timeFromDeath = 0,
     hp = hp,
     maxHp = hp,
     speed = speed,
@@ -61,21 +62,25 @@ function NewEnemy()
     collideCooldown = 0,
     saveTime = 0.1,
     Draw = function (self)
+        if self.timeFromDeath > 0 and self.timeFromDeath < 0.5 then return end
         love.graphics.setLineWidth(5)
 
         local transform = love.math.newTransform(self.x, self.y, self.angle)
 
         love.graphics.setLineWidth(5)
+        love.graphics.setLineJoin("miter")
         love.graphics.applyTransform(transform)
-
-        love.graphics.setColor(self.color, 0.5)
         if willToMoveToPlayer == 1 then
             if self.speed >= 4 then
+                love.graphics.setColor(1, 0.639, 0, 0.5)
+                love.graphics.setLineJoin("bevel")
                 love.graphics.circle("line", 0, 0, self.size/1.5, 3)
             else
+                love.graphics.setColor(1, 0, 0, 0.5)
                 love.graphics.rectangle("line", -self.size/2, -self.size/2, self.size, self.size, 5, 5)
             end
         else
+            love.graphics.setColor(0.639, 0.776, 1, 0.5)
             love.graphics.circle("line", 0, 0, self.size/1.5, 6)
         end
         love.graphics.applyTransform(transform:inverse())
@@ -87,17 +92,21 @@ function NewEnemy()
             love.graphics.rectangle("fill", Camera.x, self.y + maskHeight, love.graphics.getWidth(), love.graphics.getHeight())
         end
 
+        -- mask()
         love.graphics.stencil(mask, "replace", 1)
         love.graphics.setStencilTest("gequal", 1)
         love.graphics.applyTransform(transform)
-        love.graphics.setColor(self.color)
+        love.graphics.setLineWidth(5)
         if willToMoveToPlayer == 1 then
             if self.speed >= 4 then
+                love.graphics.setColor(1, 0.639, 0)
                 love.graphics.circle("line", 0, 0, self.size/1.5, 3)
             else
+                love.graphics.setColor(1, 0, 0)
                 love.graphics.rectangle("line", -self.size/2, -self.size/2, self.size, self.size, 5, 5)
             end
         else
+            love.graphics.setColor(0.639, 0.776, 1)
             love.graphics.circle("line", 0, 0, self.size/1.5, 6)
         end
         if IndexOf(Enemies, self) <= 4 then
@@ -105,6 +114,7 @@ function NewEnemy()
             love.graphics.setLineWidth(3)
             love.graphics.circle("line", 0, 0, self.size/1.2)
         end
+
         love.graphics.applyTransform(transform:inverse())
         love.graphics.setStencilTest()
 
@@ -113,6 +123,7 @@ function NewEnemy()
         DrawHitbox({self:GetHitbox()})
     end,
     Move = function (self)
+        if self.timeFromDeath > 0 and self.timeFromDeath < 0.5 then return end
         if IsOnTheEdge(self.x, self.y, self.size) then
             if self.x - self.size/2 < Camera.x then
                 self.x = Camera.x + self.size/2
@@ -200,6 +211,17 @@ function NewEnemy()
         return self.x - self.size/2, self.y - self.size/2, self.size, self.size
     end,
     UpdateState = function (self)
+        if self.timeFromDeath > 0 then
+            self.timeFromDeath = self.timeFromDeath + DeltaTime
+        end
+        if self.timeFromDeath >= 0.5 then
+            self.isAlive = false
+        end
+        if 0 < self.timeFromDeath and self.timeFromDeath < 0.5 then
+            return
+        end
+        
+
         -- colliding
         if self.collideCooldown > 0 then
             self.collideCooldown = self.collideCooldown + DeltaTime
@@ -215,6 +237,7 @@ function NewEnemy()
             local x2,y2,w2,h2 = Bullets[i]:GetHitbox()
             self.isColliding = CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
             if self.isColliding then 
+                Bullets[i].isAlive = false
                 self.hp = self.hp - Bullets[i].damage
                 if self.hp < 0 then self.hp = 0 end
                 if self.hp == 0 then
@@ -223,7 +246,7 @@ function NewEnemy()
                     -- ps:setColors({unpack(self.color), 0}, {unpack(self.color), 1}, {unpack(self.color), 0.5}, {unpack(self.color), 0})
                     ps:start()
                     ps:emit(16)
-                    self.isAlive = false
+                    self.timeFromDeath = DeltaTime
                 end
                 
                 self.collideCooldown = self.collideCooldown + DeltaTime
