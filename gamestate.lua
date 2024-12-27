@@ -1,3 +1,4 @@
+require("particleDeathEffect")
 GameState =
 {
 
@@ -11,7 +12,8 @@ state = {
 }
 
 Menu = function ()
-    
+    ps:update(DeltaTime)
+
 end
 
 MenuDraw = function ()
@@ -19,7 +21,10 @@ MenuDraw = function ()
         Buttons[i]:Draw()
     end
 
-
+    -- At draw time:
+    love.graphics.setBlendMode("alpha")
+    ps:moveTo(love.mouse.getPosition())
+    love.graphics.draw(ps, 0, 0)
 end
 
 MenuSetup = function ()
@@ -33,7 +38,16 @@ MenuSetup = function ()
         GameState.state.running = true
         MainSetup()
     end
-    table.insert(Buttons, NewButton(buttonContent, buttonClickLogic, love.graphics.getWidth()/2 - 150, love.graphics.getHeight()/2 - 50, 300, 100))
+    table.insert(Buttons, NewButton(buttonContent, buttonClickLogic, love.graphics.getWidth()/2 - 150, love.graphics.getHeight()/2 - 50, 300, 100, "menu"))
+
+    -- At start time:
+end
+
+function love.mousepressed( x, y, button, istouch, presses )
+    if button == 1 then
+        ps:start()
+        ps:emit(16)
+    end
 end
 
 MainSetup = function ()
@@ -43,7 +57,6 @@ MainSetup = function ()
 
     Player = NewPlayer()
 
-
     Enemies = {}
     math.randomseed(tonumber(tostring(1):reverse():sub(1, 9)))
     table.insert(Enemies, #Enemies + 1, NewEnemy())
@@ -51,7 +64,6 @@ MainSetup = function ()
     table.insert(Enemies, #Enemies + 1, NewEnemy())
 
     Bullets = {}
-
 end
 
 MainLoop = function ()
@@ -65,6 +77,7 @@ MainLoop = function ()
     end
     table.sort(Enemies, function (a, b) return a.distanceToPlayer < b.distanceToPlayer end)
     Player:Move()
+
     Player:Fire()
     
     for i=1, #Bullets do
@@ -76,6 +89,7 @@ MainLoop = function ()
     end
 
     Player:UpdateState()
+    ps:update(DeltaTime)
 
     DeleteRedundantObjects()
 
@@ -110,7 +124,9 @@ function MainDraw()
     -- love.graphics.ellipse("fill", 100, 100, 50, 55, 3)
     -- love.graphics.rectangle("fill", 25, 75, 75, 50, 3, 10, 10) 
     love.graphics.pop()
-
+    love.graphics.setBlendMode("alpha")
+    love.graphics.draw(ps, 0, 0)
+    
     love.graphics.setColor(0,1,0)
     love.graphics.print(love.timer.getFPS())
     love.graphics.print(#Enemies, 0, 50)

@@ -30,6 +30,18 @@ function NewEnemy()
         sizem = 0
     end
 
+    local color
+
+    if willToMoveToPlayer == 1 then
+        if speed >= 4 then
+            color = {1, 0.639, 0}
+        else
+            color = {1, 0, 0}
+        end
+    else
+        color = {0.639, 0.776, 1}
+    end
+
     return
     {
     isAlive = true,
@@ -40,6 +52,7 @@ function NewEnemy()
     sy = 0,
     x = x,
     y = y,
+    color = color,
     distanceToPlayer = 0,
     willToMoveToPlayer = willToMoveToPlayer,
     size = size + 30 * sizem,
@@ -54,16 +67,15 @@ function NewEnemy()
 
         love.graphics.setLineWidth(5)
         love.graphics.applyTransform(transform)
+
+        love.graphics.setColor(self.color, 0.5)
         if willToMoveToPlayer == 1 then
-            if self.speed >= 3 then
-                love.graphics.setColor(1, 0.639, 0, 0.5)
+            if self.speed >= 4 then
                 love.graphics.circle("line", 0, 0, self.size/1.5, 3)
             else
-                love.graphics.setColor(1, 0, 0, 0.5)
                 love.graphics.rectangle("line", -self.size/2, -self.size/2, self.size, self.size, 5, 5)
             end
         else
-            love.graphics.setColor(0.639, 0.776, 1, 0.5)
             love.graphics.circle("line", 0, 0, self.size/1.5, 6)
         end
         love.graphics.applyTransform(transform:inverse())
@@ -78,22 +90,20 @@ function NewEnemy()
         love.graphics.stencil(mask, "replace", 1)
         love.graphics.setStencilTest("gequal", 1)
         love.graphics.applyTransform(transform)
+        love.graphics.setColor(self.color)
         if willToMoveToPlayer == 1 then
-            if self.speed >= 3 then
-                love.graphics.setColor(1, 0.639, 0)
+            if self.speed >= 4 then
                 love.graphics.circle("line", 0, 0, self.size/1.5, 3)
             else
-                love.graphics.setColor(1, 0, 0)
                 love.graphics.rectangle("line", -self.size/2, -self.size/2, self.size, self.size, 5, 5)
             end
         else
-            love.graphics.setColor(0.639, 0.776, 1)
             love.graphics.circle("line", 0, 0, self.size/1.5, 6)
         end
         if IndexOf(Enemies, self) <= 4 then
             love.graphics.setColor(0, 1, 0)
             love.graphics.setLineWidth(3)
-            love.graphics.circle("line", 0, 0, self.size/1.5)
+            love.graphics.circle("line", 0, 0, self.size/1.2)
         end
         love.graphics.applyTransform(transform:inverse())
         love.graphics.setStencilTest()
@@ -208,6 +218,11 @@ function NewEnemy()
                 self.hp = self.hp - Bullets[i].damage
                 if self.hp < 0 then self.hp = 0 end
                 if self.hp == 0 then
+                    ps:moveTo(self.x - Camera.x, self.y - Camera.y)
+                    -- local t = {{unpack(self.color), 0}, self.color, 1, self.color, 0.5, self.color, 0}
+                    -- ps:setColors({unpack(self.color), 0}, {unpack(self.color), 1}, {unpack(self.color), 0.5}, {unpack(self.color), 0})
+                    ps:start()
+                    ps:emit(16)
                     self.isAlive = false
                 end
                 

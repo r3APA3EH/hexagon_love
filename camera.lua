@@ -9,7 +9,7 @@ function NewCamera()
     rotation = 0,
     speed = 0,
     Move = function (self)
-        self.speed = love.math.noise((love.timer.getTime()+self.seed+1000)/10)*5
+        self.speed = love.math.noise((love.timer.getTime()+self.seed+1000)/10)*6
         local dx, dy, dr = self:GetDeltas()
 
         self.transform:translate(dx, dy)
@@ -24,7 +24,8 @@ function NewCamera()
         self.speed*math.cos(self.rotation) *DeltaTime*60, -- dx
         self.speed*math.sin(self.rotation) *DeltaTime*60, -- dy
         math.rad(love.math.noise((love.timer.getTime()+self.seed)/10)*360) -- dr
-    end
+    end,
+    GetPosition = function (self) return self.x, self.y end
     }
 end
 

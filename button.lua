@@ -1,4 +1,4 @@
-function NewButton(DrawFunction, ClickFunction, x, y, width, height)
+function NewButton(DrawFunction, ClickFunction, x, y, width, height, gamestate)
     return
     {
     x = x,
@@ -7,6 +7,7 @@ function NewButton(DrawFunction, ClickFunction, x, y, width, height)
     height = height,
     DrawFunction = DrawFunction,
     ClickFunction = ClickFunction,
+    gamestate = gamestate,
     GetHitbox = function (self)
         return self.x, self.y, self.x + self.width, self.y + self.height
     end,
@@ -36,7 +37,8 @@ function NewButton(DrawFunction, ClickFunction, x, y, width, height)
         love.graphics.rectangle("line", self.x, self.y, self.width, self.height, 20, 20)
     end,
     Click = function (self)
-        if not (IsHoveredByMouse(self:GetHitbox())) then return end
+		-- print(GameState.state["menu"])
+        if not (IsHoveredByMouse(self:GetHitbox())) or not GameState.state[self.gamestate] then return end
         self.ClickFunction()
     end
     

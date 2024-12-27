@@ -2,8 +2,23 @@ function NewPlayer()
 
     local size = 30
 
+    local playerCanvas = love.graphics.newCanvas(size*2, size*2)
+    love.graphics.setCanvas(playerCanvas)
+    love.graphics.setLineWidth(5)
+    love.graphics.setColor(1, 1, 1, 0.5)
+    love.graphics.circle("line", size, size, size/2)
+    love.graphics.setCanvas()
+    
+    local image = love.graphics.newImage(playerCanvas:newImageData())
+
+    local psystem = love.graphics.newParticleSystem(image)
+	psystem:setParticleLifetime(0.5) -- Particles live at least 2s and at most 5s.
+	psystem:setEmissionRate(20)
+	psystem:setColors(1, 1, 1, 1, 1, 1, 1, 0) -- Fade to transparency.
+
     return 
     {
+    particleSystem = psystem,
     size = size,
     x = love.graphics.getWidth()/2,
     y = love.graphics.getHeight()/2,
@@ -36,6 +51,7 @@ function NewPlayer()
         love.graphics.setColor(1, 1, 1)
         love.graphics.circle("line", self.x, self.y, self.size/2)
         love.graphics.setStencilTest()
+        love.graphics.draw(self.particleSystem, 0, 0)
 
         -- variable preview
         -- love.graphics.setColor(0, 1, 0)
@@ -78,6 +94,10 @@ function NewPlayer()
 
         self.x = self.x + self.sx * DeltaTime * 60
         self.y = self.y + self.sy * DeltaTime * 60
+
+        self.particleSystem:moveTo(self.x, self.y)
+        self.particleSystem:setRotation(Player.angle, Player.angle)
+        self.particleSystem:update(DeltaTime)
     end,
     UpdateState = function (self)
         if IsOnTheEdge(self.x, self.y, self.size) then
