@@ -65,3 +65,42 @@ function DeleteRedundantObjects()
         DestroyObjectByIndex(Enemies, IndexOf(Enemies, EnemiesToDelete[i]))
     end
 end
+function MergeTables(first_table, second_table)
+    for k,v in pairs(second_table) do first_table[k] = v end
+    return first_table
+end
+
+function RandomChoice(table)
+    local n = math.random(#table)
+    return table[n]
+end
+function GetRandomSpotOnScreenPerimeter()
+    local side = math.random(1,4)
+    local x,y
+    if side == 1 then
+        x, y = 0, math.random(0, love.graphics.getHeight())
+    elseif side == 2 then
+        x, y = math.random(0, love.graphics.getWidth()), 0
+    elseif side == 3 then
+        x, y = love.graphics.getWidth(), math.random(0, love.graphics.getHeight())
+    elseif side == 4 then
+        x, y = math.random(0, love.graphics.getWidth()), love.graphics.getHeight()
+    end
+    x = x + Camera.x
+    y = y + Camera.y
+    return x, y
+end
+
+function Dump(o)
+    if type(o) == 'table' then
+       local s = '{ '
+       for k,v in pairs(o) do
+          if type(k) ~= 'number' then k = '"'..k..'"' end
+          s = s .. '['..k..'] = ' .. Dump(v) .. ','
+       end
+       return s .. '} '
+    else
+       return tostring(o)
+    end
+ end
+ 

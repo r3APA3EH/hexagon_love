@@ -1,5 +1,4 @@
 require("player")
-require("enemy")
 require("bullet")
 require("utils")
 require("camera")

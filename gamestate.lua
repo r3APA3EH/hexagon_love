@@ -1,4 +1,5 @@
 require("particleDeathEffect")
+require("Spawners.EnemySpawner")
 GameState =
 {
 
@@ -59,9 +60,9 @@ MainSetup = function ()
 
     Enemies = {}
     math.randomseed(tonumber(tostring(1):reverse():sub(1, 9)))
-    table.insert(Enemies, #Enemies + 1, NewEnemy())
+    table.insert(Enemies, #Enemies + 1, NewEnemy("random", math.random(3, 10),2 + math.random()*4))
     math.randomseed(tonumber(tostring(3):reverse():sub(1, 9)))
-    table.insert(Enemies, #Enemies + 1, NewEnemy())
+    table.insert(Enemies, #Enemies + 1, NewEnemy("random", math.random(3, 10),2 + math.random()*4))
 
     Bullets = {}
     LastRespawnTime = math.floor(love.timer.getTime())
@@ -97,7 +98,7 @@ MainLoop = function ()
     TimeFromLastEnemySpawn = TimeFromLastEnemySpawn + DeltaTime
 
     if TimeFromLastEnemySpawn >= EnemySpawnCooldown then
-        table.insert(Enemies, #Enemies + 1, NewEnemy())
+        table.insert(Enemies, #Enemies + 1, NewEnemy("random", math.random(3, 10),2 + math.random()*4))
         TimeFromLastEnemySpawn = 0
         EnemySpawnCooldown = math.random()
     end
