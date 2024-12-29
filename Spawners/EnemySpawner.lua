@@ -2,9 +2,8 @@ require("Enemies.DumbEnemy")
 require("Enemies.LazyEnemy")
 function NewEnemy(type, hp, speed)
     if type == "random" then
-        type = RandomChoice({"lazy", "dumb", "dumb", "dumb"})
+        type = RandomChoice({"lazy", "dumb", "dumb"})
     end
-    print (type)
     local x,y = GetRandomSpotOnScreenPerimeter()
     local size
     if type == "lazy" then

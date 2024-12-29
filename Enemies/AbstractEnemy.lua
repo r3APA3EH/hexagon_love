@@ -66,20 +66,30 @@ function AbstractEnemy(x, y, hp, speed)
         -- должны возвращать dx и dy
         AvoidCollisions = function (self)
             local dx, dy = 0, 0
-            for i=1, #Enemies do
-                if Enemies[i].x == self.x then goto continue end
-                if Enemies[i].y == self.y then goto continue end
-                local distanceToOthers = math.sqrt((Enemies[i].x - self.x)^2 + (Enemies[i].y - self.y)^2)
+            for i=0, #Enemies do
+                local enemy
+                if i == 0 then 
+                    enemy = Player
+                else
+                    enemy = Enemies[i]
+                end
+                if enemy == self then goto continue end
+                -- if enemy.x == self.x or enemy.y == self.y then print("same") end
+                local distanceToOthers = math.sqrt((enemy.x - self.x)^2 + (enemy.y - self.y)^2)
+
+                if i == 0 then 
+                    distanceToOthers = distanceToOthers*2
+                end
                 if distanceToOthers > self.size*3 then goto continue end
-                local newAngleToEnemy = math.asin(math.abs((Enemies[i].x - self.x)/distanceToOthers))
+                local newAngleToEnemy = math.asin(math.abs((enemy.x - self.x)/distanceToOthers))
     
-                local ddx = -math.sin(newAngleToEnemy)*self.speed* 7/(distanceToOthers - self.size*1.1)
-                local ddy = -math.cos(newAngleToEnemy)*self.speed* 7/(distanceToOthers - self.size*1.1)
+                local ddx = -math.sin(newAngleToEnemy)*self.speed* 7/math.abs((distanceToOthers - self.size))
+                local ddy = -math.cos(newAngleToEnemy)*self.speed* 7/math.abs((distanceToOthers - self.size))
     
-                if Enemies[i].x < self.x then
+                if enemy.x < self.x then
                     ddx = ddx * -1
                 end
-                if Enemies[i].y < self.y then
+                if enemy.y < self.y then
                     ddy = ddy * -1
                 end
                 
@@ -88,21 +98,6 @@ function AbstractEnemy(x, y, hp, speed)
     
                 ::continue::
             end
-            local newAngle = math.asin(math.abs((Player.x - self.x)/self.distanceToPlayer))
-    
-            local newAngleToPlayer = lerp(self.angle, newAngle, 0.1)
-            local ddx = - math.sin(newAngleToPlayer)*self.speed * 7/(self.distanceToPlayer - self.size*0.8)
-            local ddy = - math.cos(newAngleToPlayer)*self.speed * 7/(self.distanceToPlayer - self.size*0.8)
-    
-            if Player.x < self.x then
-                ddx = ddx * -1
-            end
-            if Player.y < self.y then
-                ddy = ddy * -1
-            end
-            
-            dx = dx + ddx
-            dy = dy + ddy
             return dx, dy
         end,
         PushToFrame = function (self)

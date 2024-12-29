@@ -57,6 +57,5 @@ function LazyEnemy(x, y, hp)
         DrawHitbox({self:GetHitbox()})
     end
     }
-    print(Dump(MergeTables(ParentObject, uniqueBehaviour)))
     return MergeTables(ParentObject, uniqueBehaviour)
 end
