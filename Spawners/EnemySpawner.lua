@@ -8,10 +8,8 @@ function NewEnemy(type, hp, speed)
     local x,y = GetRandomSpotOnScreenPerimeter()
     local size
     if type == "lazy" then
-        size = 60
-        return LazyEnemy(x, y, size, hp)
+        return LazyEnemy(x, y, hp)
     elseif type == "dumb" then
-        size = 30
-        return DumbEnemy(x, y, size, hp, speed)
+        return DumbEnemy(x, y, hp, speed)
     end
 end
