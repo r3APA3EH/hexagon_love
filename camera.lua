@@ -44,7 +44,7 @@ function NewBackground()
                     local x = width + self.offsetX
                     local y = height + self.offsetY
                     local distanceToPlayer = math.sqrt((Player.x - x - Camera.x)^2 + (Player.y - y -Camera.y)^2) *7.5
-                    local increment = distanceToPlayer/math.sqrt((love.graphics.getWidth())^2 + (love.graphics.getHeight())^2)
+                    local increment = distanceToPlayer/2500
                     -- print(increment)
 
                     love.graphics.setColor(increment, increment, 1, 0.15 + 0.0333/increment)
