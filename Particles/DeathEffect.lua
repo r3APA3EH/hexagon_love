@@ -1,0 +1,40 @@
+function NewDeathEffectParticleSystem()
+    local canvas = love.graphics.newCanvas(50, 50)
+    love.graphics.setCanvas(canvas)
+    love.graphics.setColor(1, 0, 0)
+    love.graphics.circle("fill", 25, 25, 12.5)
+    love.graphics.setCanvas()
+    
+    local image = love.graphics.newImage(canvas:newImageData())
+    image:setFilter("linear", "linear")
+    
+    local ps = love.graphics.newParticleSystem(image, 1000)
+    ps:setColors(1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0.5, 1, 0, 0, 0)
+    ps:setDirection(-1.5707963705063)
+    ps:setEmissionArea("none", 0, 0, 0, false)
+    ps:setEmissionRate(0)
+    ps:setEmitterLifetime(0.051562707871199)
+    ps:setInsertMode("random")
+    ps:setLinearAcceleration(0, 0, 0, 0)
+    ps:setLinearDamping(-0.0018373158527538, 0)
+    ps:setOffset(50, 50)
+    ps:setParticleLifetime(0.02, 0.5)
+    ps:setRadialAcceleration(0, 0)
+    ps:setRelativeRotation(false)
+    ps:setRotation(0, 0)
+    ps:setSizes(0.13810005784035, 0.63178646564484)
+    ps:setSizeVariation(1)
+    ps:setSpeed(1.0003163814545, 908.87933349609)
+    ps:setSpin(0, 0)
+    ps:setSpinVariation(0)
+    ps:setSpread(6.2831854820251)
+    ps:setTangentialAcceleration(0, 0)
+    -- At start time:
+    -- ps:start()
+    -- ps:emit(16)
+    -- At draw time:
+    -- love.graphics.setBlendMode("alpha")
+    -- love.graphics.draw(ps, 0+0, 0+0)
+
+    return ps
+end

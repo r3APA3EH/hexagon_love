@@ -1,4 +1,4 @@
-require("particleDeathEffect")
+require("Particles.DeathEffect")
 require("Spawners.EnemySpawner")
 GameState =
 {
@@ -13,7 +13,6 @@ state = {
 }
 
 Menu = function ()
-    ps:update(DeltaTime)
 
 end
 
@@ -21,11 +20,6 @@ MenuDraw = function ()
     for i=1, #Buttons do
         Buttons[i]:Draw()
     end
-
-    -- At draw time:
-    love.graphics.setBlendMode("alpha")
-    ps:moveTo(love.mouse.getPosition())
-    love.graphics.draw(ps, 0, 0)
 end
 
 MenuSetup = function ()
@@ -40,17 +34,7 @@ MenuSetup = function ()
         MainSetup()
     end
     table.insert(Buttons, NewButton(buttonContent, buttonClickLogic, love.graphics.getWidth()/2 - 150, love.graphics.getHeight()/2 - 50, 300, 100, "menu"))
-
-    -- At start time:
 end
-
--- function love.mousepressed( x, y, button, istouch, presses )
---     if button == 1 then
---         ps:start()
---         ps:emit(16)
---     end
--- end
-
 MainSetup = function ()
 
     EnemySpawnCooldown = math.random(2, 5)
@@ -91,7 +75,6 @@ MainLoop = function ()
     end
 
     Player:UpdateState()
-    ps:update(DeltaTime)
 
     DeleteRedundantObjects()
 
@@ -113,6 +96,8 @@ function MainDraw()
     end
     for i=1, #Enemies do
         Enemies[i]:Draw()
+        love.graphics.setBlendMode("alpha")
+        love.graphics.draw(Enemies[i].deathEffect, 0, 0)
     end
     Player:Draw()
     
@@ -127,7 +112,6 @@ function MainDraw()
     -- love.graphics.rectangle("fill", 25, 75, 75, 50, 3, 10, 10) 
     love.graphics.pop()
     love.graphics.setBlendMode("alpha")
-    love.graphics.draw(ps, 0, 0)
     
     love.graphics.setColor(0,1,0)
     love.graphics.print(love.timer.getFPS())

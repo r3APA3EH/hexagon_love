@@ -1,4 +1,6 @@
 function AbstractEnemy(x, y, size, hp, speed)
+
+    local deathEffect = NewDeathEffectParticleSystem()
     return
     {
     isAlive = true,
@@ -16,17 +18,21 @@ function AbstractEnemy(x, y, size, hp, speed)
     isColliding = false,
     collideCooldown = 0,
     saveTime = 0.1,
+    deathEffect = deathEffect,
     GetHitbox = function (self)
         return self.x - self.size/2, self.y - self.size/2, self.size, self.size
     end,
     UpdateState = function (self)
+        self.deathEffect:moveTo(self.x, self.y)
+        self.deathEffect:update(DeltaTime)
         if self.timeFromDeath > 0 then
             self.timeFromDeath = self.timeFromDeath + DeltaTime
         end
         if self.timeFromDeath >= 0.5 then
             self.isAlive = false
+            return
         end
-        if 0 < self.timeFromDeath and self.timeFromDeath < 0.5 then
+        if 0 < self.timeFromDeath and self.timeFromDeath <= 0.5 then
             return
         end
         -- colliding
@@ -48,11 +54,8 @@ function AbstractEnemy(x, y, size, hp, speed)
                 self.hp = self.hp - Bullets[i].damage
                 if self.hp < 0 then self.hp = 0 end
                 if self.hp == 0 then
-                    ps:moveTo(self.x - Camera.x, self.y - Camera.y)
-                    -- local t = {{unpack(self.color), 0}, self.color, 1, self.color, 0.5, self.color, 0}
-                    -- ps:setColors({unpack(self.color), 0}, {unpack(self.color), 1}, {unpack(self.color), 0.5}, {unpack(self.color), 0})
-                    ps:start()
-                    ps:emit(16)
+                    self.deathEffect:start()
+                    self.deathEffect:emit(16)
                     self.timeFromDeath = DeltaTime
                 end      
                 self.collideCooldown = self.collideCooldown + DeltaTime
