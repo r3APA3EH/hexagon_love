@@ -100,16 +100,6 @@ function MainDraw()
         love.graphics.draw(Enemies[i].deathEffect, 0, 0)
     end
     Player:Draw()
-    
-    -- love.graphics.applyTransform(Camera.transform)
-
-    -- love.graphics.polygon("line", Camera.x, Camera.y, love.graphics.getWidth()+Camera.x, Camera.y, love.graphics.getWidth()+Camera.x, love.graphics.getHeight()+Camera.y, Camera.x, love.graphics.getHeight()+Camera.y)
-    -- love.graphics.applyTransform(Camera.transform:inverse())
-    
-
-    -- arrow
-    -- love.graphics.ellipse("fill", 100, 100, 50, 55, 3)
-    -- love.graphics.rectangle("fill", 25, 75, 75, 50, 3, 10, 10) 
     love.graphics.pop()
     love.graphics.setBlendMode("alpha")
     
@@ -117,9 +107,5 @@ function MainDraw()
     love.graphics.print(love.timer.getFPS())
     love.graphics.printf(math.floor(love.timer.getTime()) - LastRespawnTime, love.graphics.getWidth()/2, 30, 100, "left", 0, 3, 3)
     love.graphics.print(#Enemies, 0, 50)
-    -- love.graphics.print(Player.x, 0, 100)
-    -- love.graphics.print(Player.y, 200, 100)
-    -- love.graphics.print(Camera.x, 0, 150)
-    -- love.graphics.print(Camera.y, 200, 150)
 end
     
