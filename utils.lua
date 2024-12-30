@@ -52,6 +52,7 @@ end
 function DeleteRedundantObjects()
     local BulletsToDelete = {}
     local EnemiesToDelete = {}
+    local PowerupsToDelete = {}
 
     for i=1, #Bullets do
         if not Bullets[i].isAlive then
@@ -64,6 +65,11 @@ function DeleteRedundantObjects()
             table.insert(EnemiesToDelete, Enemies[i])
         end
     end
+    for i=1, #Powerups do
+        if not Powerups[i].isAlive then
+            table.insert(PowerupsToDelete, Powerups[i])
+        end
+    end
 
     for i=1, #BulletsToDelete do
         DestroyObjectByIndex(Bullets, IndexOf(Bullets, BulletsToDelete[i]))
@@ -71,6 +77,9 @@ function DeleteRedundantObjects()
 
     for i=1, #EnemiesToDelete do
         DestroyObjectByIndex(Enemies, IndexOf(Enemies, EnemiesToDelete[i]))
+    end
+    for i=1, #PowerupsToDelete do
+        DestroyObjectByIndex(Powerups, IndexOf(Powerups, PowerupsToDelete[i]))
     end
 end
 function MergeTables(first_table, second_table)

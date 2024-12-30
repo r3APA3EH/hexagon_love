@@ -43,7 +43,7 @@ function AbstractEnemy(x, y, hp, speed)
         love.graphics.setAlpha(1)
         love.graphics.draw(self.sprite, -self.sprite:getWidth()/2, -self.sprite:getHeight()/2)
         
-        if IndexOf(Enemies, self) <= 4 then
+        if IndexOf(Enemies, self) <= Player.shotsNumber then
             love.graphics.setColor(0, 1, 0)
             love.graphics.setLineWidth(3)
             love.graphics.circle("line", 0, 0, self.size/1.7)

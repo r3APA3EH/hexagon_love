@@ -33,6 +33,7 @@ function NewPlayer()
     canFire = true,
     canFireTimer = 0,
     fireCooldown = 0,
+    shotsNumber = 1,
     GetHitbox = function (self)
         return self.x - self.size/2, self.y - self.size/2, self.size, self.size
     end,
@@ -71,22 +72,14 @@ function NewPlayer()
 
         local distanceToCursor = math.sqrt((mx - self.x)^2 + (my - self.y)^2)
         self.angle = math.atan2((my - self.y), (mx - self.x))
+        local speed = self.speed
 
-        -- self.angle = lerp(self.angle, newAngle, 0.1)
-        self.speed = 10
-        if distanceToCursor < self.speed then
-            self.speed = distanceToCursor
+        if distanceToCursor < speed then
+            speed = distanceToCursor
         end
-
-        local ddx = math.cos(self.angle)*self.speed
-        local ddy = math.sin(self.angle)*self.speed
-
-        -- if mx < self.x then
-        --     ddx = ddx * -1
-        -- end
-        -- if my < self.y then
-        --     ddy = ddy * -1
-        -- end
+        
+        local ddx = math.cos(self.angle)*speed
+        local ddy = math.sin(self.angle)*speed
         
         dx = dx + ddx
         dy = dy + ddy
@@ -119,6 +112,10 @@ function NewPlayer()
         if self.fireCooldown >= 0.5 then
             self.fireCooldown = 0
             self.canFire = true
+        end
+
+        if self.hp > self.maxHp then
+            self.maxHp = self.hp
         end
 
         -- colliding
@@ -175,7 +172,7 @@ function NewPlayer()
             table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, 30, 1))
         end
 
-        for i=1, 4 do
+        for i=1, self.shotsNumber do
             fire(i)
         end
 

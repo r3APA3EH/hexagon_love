@@ -1,6 +1,7 @@
 require("Particles.DeathEffect")
 require("Spawners.EnemySpawner")
 require("pickupable")
+require("Spawners.PowerupSpawner")
 GameState =
 {
 
@@ -51,7 +52,7 @@ MainSetup = function ()
     LastRespawnTime = math.floor(love.timer.getTime())
 
     Powerups = {}
-    Powerups[#Powerups+1] = NewPickupable(0, 0, function () end)
+    Powerups[#Powerups+1] = NewPowerup("random")
 end
 
 MainLoop = function ()
@@ -77,6 +78,9 @@ MainLoop = function ()
     end
 
     Player:UpdateState()
+    for i=1, #Powerups do
+        Powerups[i]:UpdateState()
+    end
 
     DeleteRedundantObjects()
 
@@ -84,6 +88,7 @@ MainLoop = function ()
 
     if TimeFromLastEnemySpawn >= EnemySpawnCooldown then
         table.insert(Enemies, #Enemies + 1, NewEnemy("random", math.random(3, 10),2 + math.random()*4))
+        Powerups[#Powerups+1] = NewPowerup("random")
         TimeFromLastEnemySpawn = 0
         EnemySpawnCooldown = math.random()
     end
@@ -112,5 +117,7 @@ function MainDraw()
     love.graphics.print(love.timer.getFPS())
     love.graphics.printf(math.floor(love.timer.getTime()) - LastRespawnTime, love.graphics.getWidth()/2, 30, 100, "left", 0, 3, 3)
     love.graphics.print(#Enemies, 0, 50)
+    love.graphics.print(Player.hp, 0, 100)
+    love.graphics.print(#Powerups, 0, 150)
 end
     
