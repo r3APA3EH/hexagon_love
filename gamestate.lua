@@ -1,5 +1,6 @@
 require("Particles.DeathEffect")
 require("Spawners.EnemySpawner")
+require("pickupable")
 GameState =
 {
 
@@ -43,13 +44,14 @@ MainSetup = function ()
     Player = NewPlayer()
 
     Enemies = {}
-    math.randomseed(tonumber(tostring(1):reverse():sub(1, 9)))
-    table.insert(Enemies, #Enemies + 1, NewEnemy("random", math.random(3, 10),2 + math.random()*4))
-    math.randomseed(tonumber(tostring(3):reverse():sub(1, 9)))
-    table.insert(Enemies, #Enemies + 1, NewEnemy("random", math.random(3, 10),2 + math.random()*4))
+    Enemies[#Enemies + 1] = NewEnemy("random", math.random(3, 10),2 + math.random()*4)
+    Enemies[#Enemies + 1] = NewEnemy("random", math.random(3, 10),2 + math.random()*4)
 
     Bullets = {}
     LastRespawnTime = math.floor(love.timer.getTime())
+
+    Powerups = {}
+    Powerups[#Powerups+1] = NewPickupable(0, 0, function () end)
 end
 
 MainLoop = function ()
@@ -93,6 +95,9 @@ function MainDraw()
 
     for i=1, #Bullets do
         Bullets[i]:Draw()
+    end
+    for i=1, #Powerups do
+        Powerups[i]:Draw()
     end
     for i=1, #Enemies do
         Enemies[i]:Draw()

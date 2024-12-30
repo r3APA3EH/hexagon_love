@@ -20,6 +20,14 @@ function DrawHitbox(hitbox)
     love.graphics.rectangle("line", unpack(hitbox))
 end
 
+function DrawSpeed(x, y, sx, sy)
+    if not ShowHitboxes then return end
+
+    love.graphics.setColor(0, 1, 0)
+    love.graphics.setLineWidth(2)
+    love.graphics.line(x, y, (x + sx), (y + sy))
+end
+
 function IsOnTheEdge(x, y, size)
     local rightEdge = x + size/2 >= love.graphics.getWidth() + Camera.x
     local leftEdge = x - size/2 <= 0 + Camera.x
@@ -104,3 +112,34 @@ function Dump(o)
     end
  end
  
+
+function love.graphics.setAlpha(alpha)
+    local r, g, b, a = love.graphics.getColor()
+    love.graphics.setColor(r, g, b, alpha)
+end
+
+
+function DrawFunctionToImage(width, height, drawFunction)
+    local lineWidth = love.graphics.getLineWidth()
+    local canvas = love.graphics.newCanvas(width + lineWidth, height + lineWidth)
+
+    love.graphics.setCanvas(canvas)
+    drawFunction()
+    love.graphics.setCanvas()
+
+    local image = love.graphics.newImage(canvas:newImageData())
+    return image
+    -- return canvas
+end
+function DrawFunctionToImageData(width, height, drawFunction)
+    local lineWidth = love.graphics.getLineWidth()
+    local canvas = love.graphics.newCanvas(width + lineWidth, height + lineWidth)
+
+    love.graphics.setCanvas(canvas)
+    drawFunction()
+    love.graphics.setCanvas()
+
+    local imageData = canvas:newImageData()
+    return imageData
+    -- return canvas
+end

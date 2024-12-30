@@ -12,6 +12,7 @@ function AbstractEnemy(x, y, hp, speed)
     sy = 0,
     x = x,
     y = y,
+    color = {1, 1, 1},
     distanceToPlayer = 0,
     angle = 0,
     isColliding = false,
@@ -20,6 +21,39 @@ function AbstractEnemy(x, y, hp, speed)
     deathEffect = deathEffect,
     GetHitbox = function (self)
         return self.x - self.size/2, self.y - self.size/2, self.size, self.size
+    end,
+    Draw = function (self)
+        if self.timeFromDeath > 0 and self.timeFromDeath < 0.5 then return end
+
+        local transform = love.math.newTransform(self.x, self.y, self.angle)
+
+        love.graphics.setColor(self.color)
+        love.graphics.setLineWidth(5)
+        love.graphics.setLineJoin("bevel")
+
+        love.graphics.applyTransform(transform)
+
+        love.graphics.setAlpha(0.5)
+        love.graphics.draw(self.sprite, -self.sprite:getWidth()/2, -self.sprite:getHeight()/2)
+
+        local maskHeight = self.size/2 - (self.size / self.maxHp * self.hp)
+        if self.hp == self.maxHp then maskHeight = maskHeight - 8 end
+        love.graphics.setScissor(0, -Camera.y + self.y + maskHeight, love.graphics.getWidth(), love.graphics.getHeight())
+        
+        love.graphics.setAlpha(1)
+        love.graphics.draw(self.sprite, -self.sprite:getWidth()/2, -self.sprite:getHeight()/2)
+        
+        if IndexOf(Enemies, self) <= 4 then
+            love.graphics.setColor(0, 1, 0)
+            love.graphics.setLineWidth(3)
+            love.graphics.circle("line", 0, 0, self.size/1.7)
+        end
+
+        love.graphics.applyTransform(transform:inverse())
+        love.graphics.setScissor()
+
+        DrawSpeed(self.x, self.y, self.sx, self.sy)
+        DrawHitbox({self:GetHitbox()})
     end,
     UpdateState = function (self)
         self.deathEffect:moveTo(self.x, self.y)
@@ -81,17 +115,10 @@ function AbstractEnemy(x, y, hp, speed)
                     distanceToOthers = distanceToOthers*2
                 end
                 if distanceToOthers > self.size*3 then goto continue end
-                local newAngleToEnemy = math.asin(math.abs((enemy.x - self.x)/distanceToOthers))
+                local newAngleToEnemy = math.atan2((enemy.y - self.y), (enemy.x - self.x))
     
-                local ddx = -math.sin(newAngleToEnemy)*self.speed* 7/math.abs((distanceToOthers - self.size))
-                local ddy = -math.cos(newAngleToEnemy)*self.speed* 7/math.abs((distanceToOthers - self.size))
-    
-                if enemy.x < self.x then
-                    ddx = ddx * -1
-                end
-                if enemy.y < self.y then
-                    ddy = ddy * -1
-                end
+                local ddx = -math.cos(newAngleToEnemy)*self.speed* 7/math.abs((distanceToOthers - self.size))*enemy.size/self.size
+                local ddy = -math.sin(newAngleToEnemy)*self.speed* 7/math.abs((distanceToOthers - self.size))*enemy.size/self.size
                 
                 dx = dx + ddx
                 dy = dy + ddy
@@ -101,19 +128,24 @@ function AbstractEnemy(x, y, hp, speed)
             return dx, dy
         end,
         PushToFrame = function (self)
+            local dx, dy = 0, 0
             if IsOnTheEdge(self.x, self.y, self.size) then
                 if self.x - self.size/2 < Camera.x then
-                    self.x = Camera.x + self.size/2
+                    -- self.x = Camera.x + self.size/2
+                    dx = Camera.x - (self.x - self.size/2)
                 elseif self.x + self.size/2 > Camera.x + love.graphics.getWidth() then
-                    self.x = Camera.x + love.graphics.getWidth() - self.size/2
+                    -- self.x = Camera.x + love.graphics.getWidth() - self.size/2
+                    dx = (Camera.x + love.graphics.getWidth()) - (self.x + self.size/2)
                 end
                 if self.y - self.size/2 < Camera.y then
-                    self.y = Camera.y + self.size/2
+                    -- self.y = Camera.y + self.size/2
+                    dy = Camera.y - (self.y - self.size/2)
                 elseif self.y + self.size/2 > Camera.y + love.graphics.getHeight() then
-                    self.y = Camera.y + love.graphics.getHeight() - self.size/2
+                    -- self.y = Camera.y + love.graphics.getHeight() - self.size/2
+                    dy = (Camera.y + love.graphics.getHeight()) - (self.y + self.size/2)
                 end
             end
-            return 0, 0
+            return dx, dy
         end,
     },
     Move = function (self)
@@ -127,8 +159,8 @@ function AbstractEnemy(x, y, hp, speed)
             dy = dy + ddy
         end
 
-        self.sx = self.sx * 0.5 + dx
-        self.sy = self.sy * 0.5 + dy
+        self.sx = self.sx * 0.6 + dx
+        self.sy = self.sy * 0.6 + dy
 
         self.x = self.x + self.sx * DeltaTime * 60
         self.y = self.y + self.sy * DeltaTime * 60

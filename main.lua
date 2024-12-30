@@ -21,6 +21,10 @@ function love.mousereleased( x, y, button, istouch, presses )
     end
 end
 
+function love.resize( w, h )
+    Background:RerenderBackground()
+end
+
 -- function love.focus(f) GameState.state.paused = not f end
 
 function love.load()
@@ -36,6 +40,7 @@ function love.load()
 
     Camera = NewCamera()
     Background = NewBackground()
+    -- love.graphics.setBackgroundColor(1, 1, 1, 1)
 end
 
 function love.update(dt)

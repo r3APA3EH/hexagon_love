@@ -2,14 +2,14 @@ function NewPlayer()
 
     local size = 30
 
-    local playerCanvas = love.graphics.newCanvas(size*2, size*2)
-    love.graphics.setCanvas(playerCanvas)
-    love.graphics.setLineWidth(5)
-    love.graphics.setColor(1, 1, 1, 0.5)
-    love.graphics.circle("line", size, size, size/2)
-    love.graphics.setCanvas()
-    
-    local image = love.graphics.newImage(playerCanvas:newImageData())
+    local shape = function ()
+        love.graphics.setLineWidth(5)
+        love.graphics.setColor(1, 1, 1, 0.5)
+        local lineWidth = love.graphics.getLineWidth()
+        love.graphics.circle("line", (size + lineWidth)/2, (size + lineWidth)/2, size/2)
+    end
+
+    local image = DrawFunctionToImage(size, size, shape)
 
     local psystem = love.graphics.newParticleSystem(image)
 	psystem:setParticleLifetime(0.5) -- Particles live at least 2s and at most 5s.
@@ -37,8 +37,11 @@ function NewPlayer()
         return self.x - self.size/2, self.y - self.size/2, self.size, self.size
     end,
     Draw = function (self)
+        
         -- love.graphics.push()
         love.graphics.setLineWidth(5)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(self.particleSystem, 0, 0)
         love.graphics.setColor(1, 1, 1, 0.5)
         love.graphics.circle("line", self.x, self.y, self.size/2)
         local mask = function ()
@@ -51,12 +54,11 @@ function NewPlayer()
         love.graphics.setColor(1, 1, 1)
         love.graphics.circle("line", self.x, self.y, self.size/2)
         love.graphics.setStencilTest()
-        love.graphics.draw(self.particleSystem, 0, 0)
 
         -- variable preview
         -- love.graphics.setColor(0, 1, 0)
         -- love.graphics.print(self.hp, self.x, self.y - 30)
-
+        DrawSpeed(self.x, self.y, self.sx, self.sy)
         DrawHitbox({self:GetHitbox()})
     end,
     Move = function (self)
@@ -68,23 +70,23 @@ function NewPlayer()
         my = my + Camera.y
 
         local distanceToCursor = math.sqrt((mx - self.x)^2 + (my - self.y)^2)
-        local newAngle = math.asin(math.abs((mx - self.x)/distanceToCursor))
+        self.angle = math.atan2((my - self.y), (mx - self.x))
 
-        self.angle = lerp(self.angle, newAngle, 0.1)
+        -- self.angle = lerp(self.angle, newAngle, 0.1)
         self.speed = 10
         if distanceToCursor < self.speed then
             self.speed = distanceToCursor
         end
 
-        local ddx = math.sin(self.angle)*self.speed
-        local ddy = math.cos(self.angle)*self.speed
+        local ddx = math.cos(self.angle)*self.speed
+        local ddy = math.sin(self.angle)*self.speed
 
-        if mx < self.x then
-            ddx = ddx * -1
-        end
-        if my < self.y then
-            ddy = ddy * -1
-        end
+        -- if mx < self.x then
+        --     ddx = ddx * -1
+        -- end
+        -- if my < self.y then
+        --     ddy = ddy * -1
+        -- end
         
         dx = dx + ddx
         dy = dy + ddy
@@ -145,10 +147,10 @@ function NewPlayer()
             if self.hp < 0 then self.hp = 0 end 
         end
 
-        if self.hp == 0 then
-            GameState.state.menu = true
-            GameState.state.running = false
-        end
+        -- if self.hp == 0 then
+        --     GameState.state.menu = true
+        --     GameState.state.running = false
+        -- end
 
         
 
@@ -165,21 +167,12 @@ function NewPlayer()
 
         local fire = function (index)
             if #Enemies < index then return end
-            local enemyX, enemyY = Enemies[index].x, Enemies[index].y
+            local enemy = Enemies[index]
 
-            local xDirection = 1
-            local yDirection = 1
-            if self.x > enemyX then
-                xDirection = xDirection * -1
-            end
-            if self.y > enemyY then
-                yDirection = yDirection * -1
-            end
-
-            local angle = math.asin(math.abs((enemyX - self.x)/math.sqrt((enemyX - self.x)^2 + (enemyY - self.y)^2)))
+            local angle = math.atan2((enemy.y - self.y), (enemy.x - self.x))
             angle = angle + math.rad((math.random() - 0.5)*10)
 
-            table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, xDirection, yDirection, 30, 1))
+            table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, 30, 1))
         end
 
         for i=1, 4 do

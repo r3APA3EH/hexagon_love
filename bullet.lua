@@ -1,4 +1,4 @@
-function NewBullet(isShotByPlayer ,x, y, angle, xDirection, yDirection, speed, damage)
+function NewBullet(isShotByPlayer, x, y, angle, speed, damage)
     local size = 5
     return {
         isAlive = true,
@@ -7,8 +7,6 @@ function NewBullet(isShotByPlayer ,x, y, angle, xDirection, yDirection, speed, d
         y = y,
         size = size,
         angle = angle,
-        xDirection = xDirection,
-        yDirection = yDirection,
         speed = speed,
         damage = damage,
         Draw = function (self)
@@ -18,8 +16,8 @@ function NewBullet(isShotByPlayer ,x, y, angle, xDirection, yDirection, speed, d
         end,
         Move = function (self)
 
-            local dx = math.sin(self.angle)*self.speed * self.xDirection
-            local dy = math.cos(self.angle)*self.speed * self.yDirection
+            local dx = math.cos(self.angle)*self.speed
+            local dy = math.sin(self.angle)*self.speed
 
             self.x = self.x + dx * DeltaTime * 60
             self.y = self.y + dy * DeltaTime * 60

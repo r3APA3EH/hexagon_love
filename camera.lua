@@ -30,30 +30,40 @@ function NewCamera()
 end
 
 function NewBackground()
+
+    local windowWidth, windowHeight = love.graphics.getWidth(), love.graphics.getHeight()
+    local shape = function (self)
+        love.graphics.setLineWidth(5)
+        for width=0, windowWidth + 200, 100 do
+            for height=0, windowHeight + 200, 100 do
+                love.graphics.setColor(1,1,1, 0.4)
+                -- if Player ~= nil then
+                --     local x = width + self.offsetX
+                --     local y = height + self.offsetY
+                --     local distanceToPlayer = math.sqrt((Player.x - x - Camera.x)^2 + (Player.y - y -Camera.y)^2) *7.5
+                --     local increment = distanceToPlayer/2500
+                --     -- print(increment)
+
+                --     love.graphics.setColor(increment, increment, 1, 0.15 + 0.0333/increment)
+                -- end
+                
+
+                love.graphics.circle("line", width, height, 10)
+            end
+        end
+    end
+
+    local sprite = DrawFunctionToImage(windowWidth + 200, windowHeight + 200, shape)
+
+
     return
     {
+    sprite = sprite,
     offsetX = 0,
     offsetY = 0,
     Draw = function (self)
-        love.graphics.setLineWidth(5)
-        local segments = 2 + math.ceil(love.math.noise((love.timer.getTime()/10))*6)
-        for width=-100, love.graphics.getWidth() + 100, 100 do
-            for height=-100, love.graphics.getHeight() + 100, 100 do
-                love.graphics.setColor(1,1,1,0.15)
-                if Player ~= nil then
-                    local x = width + self.offsetX
-                    local y = height + self.offsetY
-                    local distanceToPlayer = math.sqrt((Player.x - x - Camera.x)^2 + (Player.y - y -Camera.y)^2) *7.5
-                    local increment = distanceToPlayer/2500
-                    -- print(increment)
-
-                    love.graphics.setColor(increment, increment, 1, 0.15 + 0.0333/increment)
-                end
-                
-
-                love.graphics.circle("line", width + self.offsetX, height + self.offsetY, 10)
-            end
-        end
+        love.graphics.setColor(1,1,1)
+        love.graphics.draw(self.sprite, self.offsetX-100, self.offsetY-100)
     end,
     Update = function (self)
         if self.offsetX >= 100 or self.offsetX <= -100 then
@@ -65,6 +75,31 @@ function NewBackground()
         local cdx, cdy = Camera:GetDeltas()
         self.offsetX = self.offsetX + cdx
         self.offsetY = self.offsetY + cdy
+    end,
+    RerenderBackground = function (self)
+        local windowWidth, windowHeight = love.graphics.getWidth(), love.graphics.getHeight()
+        local shape = function (self)
+            love.graphics.setLineWidth(5)
+            for width=0, windowWidth + 200, 100 do
+                for height=0, windowHeight + 200, 100 do
+                love.graphics.setColor(1,1,1, 0.4)
+                    -- if Player ~= nil then
+                    --     local x = width + self.offsetX
+                    --     local y = height + self.offsetY
+                    --     local distanceToPlayer = math.sqrt((Player.x - x - Camera.x)^2 + (Player.y - y -Camera.y)^2) *7.5
+                    --     local increment = distanceToPlayer/2500
+                    --     -- print(increment)
+
+                    --     love.graphics.setColor(increment, increment, 1, 0.15 + 0.0333/increment)
+                    -- end
+                    
+
+                    love.graphics.circle("line", width, height, 10)
+                end
+            end
+        end
+
+    self.sprite = DrawFunctionToImage(windowWidth + 200, windowHeight + 200, shape)
     end
     }
 end
