@@ -92,7 +92,7 @@ function AbstractEnemy(x, y, hp, speed)
                     self.timeFromDeath = DeltaTime
                 end      
                 self.collideCooldown = self.collideCooldown + DeltaTime
-                break
+                -- break
             end
         end   
     end,

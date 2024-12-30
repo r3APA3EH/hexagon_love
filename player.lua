@@ -32,29 +32,26 @@ function NewPlayer()
     speed = 10,
     canFire = true,
     canFireTimer = 0,
-    fireCooldown = 0,
+    fireDelay = 1,
     shotsNumber = 1,
     GetHitbox = function (self)
         return self.x - self.size/2, self.y - self.size/2, self.size, self.size
     end,
     Draw = function (self)
-        
-        -- love.graphics.push()
         love.graphics.setLineWidth(5)
         love.graphics.setColor(1, 1, 1)
         love.graphics.draw(self.particleSystem, 0, 0)
         love.graphics.setColor(1, 1, 1, 0.5)
         love.graphics.circle("line", self.x, self.y, self.size/2)
-        local mask = function ()
-            local maskHeight = self.size/2 - (self.size / self.maxHp * self.hp)
-            if self.hp == self.maxHp then maskHeight = maskHeight - 5 end
-            love.graphics.rectangle("fill", Camera.x, self.y + maskHeight, love.graphics.getWidth(), love.graphics.getHeight())
-        end
-        love.graphics.stencil(mask, "replace", 1)
-        love.graphics.setStencilTest("gequal", 1)
+
+        local maskHeight = self.size/2 - (self.size / self.maxHp * self.hp)
+        if self.hp == self.maxHp then maskHeight = maskHeight - 5 end
+
+        love.graphics.setScissor(0, -Camera.y + self.y + maskHeight, love.graphics.getWidth(), love.graphics.getHeight())
+
         love.graphics.setColor(1, 1, 1)
         love.graphics.circle("line", self.x, self.y, self.size/2)
-        love.graphics.setStencilTest()
+        love.graphics.setScissor()
 
         -- variable preview
         -- love.graphics.setColor(0, 1, 0)
@@ -95,18 +92,18 @@ function NewPlayer()
         self.particleSystem:update(DeltaTime)
     end,
     UpdateState = function (self)
-        if IsOnTheEdge(self.x, self.y, self.size) then
-            if self.x - self.size/2 < Camera.x then
-                self.x = Camera.x + self.size/2
-            elseif self.x + self.size/2 > Camera.x + love.graphics.getWidth() then
-                self.x = Camera.x + love.graphics.getWidth() - self.size/2
-            end
-            if self.y - self.size/2 < Camera.y then
-                self.y = Camera.y + self.size/2
-            elseif self.y + self.size/2 > Camera.y + love.graphics.getHeight() then
-                self.y = Camera.y + love.graphics.getHeight() - self.size/2
-            end
-        end
+        -- if IsOnTheEdge(self.x, self.y, self.size) then
+        --     if self.x - self.size/2 < Camera.x then
+        --         self.x = Camera.x + self.size/2
+        --     elseif self.x + self.size/2 > Camera.x + love.graphics.getWidth() then
+        --         self.x = Camera.x + love.graphics.getWidth() - self.size/2
+        --     end
+        --     if self.y - self.size/2 < Camera.y then
+        --         self.y = Camera.y + self.size/2
+        --     elseif self.y + self.size/2 > Camera.y + love.graphics.getHeight() then
+        --         self.y = Camera.y + love.graphics.getHeight() - self.size/2
+        --     end
+        -- end
         -- firing
         self.fireCooldown = self.fireCooldown + DeltaTime
         if self.fireCooldown >= 0.5 then
@@ -144,18 +141,18 @@ function NewPlayer()
             if self.hp < 0 then self.hp = 0 end 
         end
 
-        -- if self.hp == 0 then
-        --     GameState.state.menu = true
-        --     GameState.state.running = false
-        -- end
+        if self.hp == 0 then
+            GameState.state.menu = true
+            GameState.state.running = false
+        end
 
         
 
 
-        Player.canFireTimer = Player.canFireTimer + DeltaTime
-        if Player.canFireTimer > 0.4 then
-            Player.canFireTimer = 0
-            Player.canFire = true
+        self.canFireTimer = self.canFireTimer + DeltaTime
+        if self.canFireTimer > self.fireDelay then
+            self.canFireTimer = 0
+            self.canFire = true
         end
 
     end,
