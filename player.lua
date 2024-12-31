@@ -20,8 +20,8 @@ function NewPlayer()
     {
     particleSystem = psystem,
     size = size,
-    x = love.graphics.getWidth()/2,
-    y = love.graphics.getHeight()/2,
+    x = love.graphics.getWidth()/2 + Camera.x,
+    y = love.graphics.getHeight()/2 + Camera.y,
     sx = 0,
     sy = 0,
     angle = 0,
@@ -33,7 +33,8 @@ function NewPlayer()
     canFire = true,
     canFireTimer = 0,
     fireDelay = 1,
-    shotsNumber = 1,
+    shotsNumber = 2,
+    bulletDamage = 1,
     GetHitbox = function (self)
         return self.x - self.size/2, self.y - self.size/2, self.size, self.size
     end,
@@ -73,6 +74,9 @@ function NewPlayer()
 
         if distanceToCursor < speed then
             speed = distanceToCursor
+        end
+        if distanceToCursor < self.size/2 then
+            speed = 0
         end
         
         local ddx = math.cos(self.angle)*speed
@@ -160,13 +164,13 @@ function NewPlayer()
         if not self.canFire then return end
 
         local fire = function (index)
-            if #Enemies < index then return end
+            index = index % #Enemies + 1
             local enemy = Enemies[index]
 
             local angle = math.atan2((enemy.y - self.y), (enemy.x - self.x))
-            angle = angle + math.rad((math.random() - 0.5)*10)
+            angle = angle + math.rad((math.random() - 0.5)*6)
 
-            table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, angle, 30, 1))
+            table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, 5, angle, 30, self.bulletDamage))
         end
 
         for i=1, self.shotsNumber do

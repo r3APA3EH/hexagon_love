@@ -90,7 +90,7 @@ MainLoop = function ()
         table.insert(Enemies, #Enemies + 1, NewEnemy("random", math.random(3, 10),2 + math.random()*4))
         Powerups[#Powerups+1] = NewPowerup("random")
         TimeFromLastEnemySpawn = 0
-        EnemySpawnCooldown = math.random()
+        EnemySpawnCooldown = math.random()*math.sqrt(#Enemies/5)
     end
 end
 

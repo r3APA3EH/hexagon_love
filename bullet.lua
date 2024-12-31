@@ -1,5 +1,4 @@
-function NewBullet(isShotByPlayer, x, y, angle, speed, damage)
-    local size = 5
+function NewBullet(isShotByPlayer, x, y, size, angle, speed, damage)
     return {
         isAlive = true,
         isShotByPlayer = isShotByPlayer,

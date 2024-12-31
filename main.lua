@@ -28,6 +28,9 @@ end
 -- function love.focus(f) GameState.state.paused = not f end
 
 function love.load()
+    love.window.maximize( )
+    love.window.setFullscreen( true )
+    love.window.setTitle("Hexagon LOVE")
     CurrentOS = love.system.getOS()
     StartTime = love.timer.getTime()
     love.window.setMode(800, 600, {resizable=true, vsync=0, minwidth=400, minheight=300})
@@ -41,6 +44,7 @@ function love.load()
     Camera = NewCamera()
     Background = NewBackground()
     -- love.graphics.setBackgroundColor(1, 1, 1, 1)
+    love.graphics.setBackgroundColor(0, 0, 0, 1)
 end
 
 function love.update(dt)
