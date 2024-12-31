@@ -1,6 +1,4 @@
 function AbstractEnemy(x, y, hp, speed)
-
-    local deathEffect = NewDeathEffectParticleSystem()
     return
     {
     isAlive = true,
@@ -18,7 +16,7 @@ function AbstractEnemy(x, y, hp, speed)
     isColliding = false,
     collideCooldown = 0,
     saveTime = 0.1,
-    deathEffect = deathEffect,
+    deathEffect = NewDeathEffectParticleSystem(),
     GetHitbox = function (self)
         return self.x - self.size/2, self.y - self.size/2, self.size, self.size
     end,
@@ -27,19 +25,17 @@ function AbstractEnemy(x, y, hp, speed)
 
         local transform = love.math.newTransform(self.x, self.y, self.angle)
 
-        love.graphics.setColor(self.color)
-        love.graphics.setLineWidth(5)
         love.graphics.setLineJoin("bevel")
 
         love.graphics.applyTransform(transform)
-
+        love.graphics.setColor(self.color)
         love.graphics.setAlpha(0.5)
         love.graphics.draw(self.sprite, -self.sprite:getWidth()/2, -self.sprite:getHeight()/2)
 
         local maskHeight = self.size/2 - (self.size / self.maxHp * self.hp)
         if self.hp == self.maxHp then maskHeight = maskHeight - 8 end
         love.graphics.setScissor(0, -Camera.y + self.y + maskHeight, love.graphics.getWidth(), love.graphics.getHeight())
-        
+        love.graphics.setColor(self.color)
         love.graphics.setAlpha(1)
         love.graphics.draw(self.sprite, -self.sprite:getWidth()/2, -self.sprite:getHeight()/2)
         
@@ -55,6 +51,9 @@ function AbstractEnemy(x, y, hp, speed)
         DrawSpeed(self.x, self.y, self.sx, self.sy)
         DrawHitbox({self:GetHitbox()})
     end,
+    UpdateFunctions = {
+
+    },
     UpdateState = function (self)
         self.deathEffect:moveTo(self.x, self.y)
         self.deathEffect:update(DeltaTime)
@@ -74,6 +73,7 @@ function AbstractEnemy(x, y, hp, speed)
         end
         if self.collideCooldown >= self.saveTime then self.collideCooldown = 0 end
         for i=1, #Bullets do
+            if not Bullets[i].isShotByPlayer then goto continue end
             if 0 < self.collideCooldown and self.collideCooldown < self.saveTime then 
                 self.isColliding = false 
                 break
@@ -83,18 +83,21 @@ function AbstractEnemy(x, y, hp, speed)
             local x2,y2,w2,h2 = Bullets[i]:GetHitbox()
             self.isColliding = CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
             if self.isColliding then 
-                -- Bullets[i].isAlive = false
                 self.hp = self.hp - Bullets[i].damage
                 if self.hp < 0 then self.hp = 0 end
                 if self.hp == 0 then
                     self.deathEffect:start()
                     self.deathEffect:emit(16)
                     self.timeFromDeath = DeltaTime
+                    Powerups[#Powerups+1] = NewPowerup("random", self.x, self.y)
                 end      
                 self.collideCooldown = self.collideCooldown + DeltaTime
-                -- break
             end
-        end   
+            ::continue::
+        end 
+        for functionName, functionLogic in pairs(self.UpdateFunctions) do
+            functionLogic(self)
+        end
     end,
     MoveFunctions = {
         -- должны возвращать dx и dy
@@ -131,17 +134,13 @@ function AbstractEnemy(x, y, hp, speed)
             local dx, dy = 0, 0
             if IsOnTheEdge(self.x, self.y, self.size) then
                 if self.x - self.size/2 < Camera.x then
-                    -- self.x = Camera.x + self.size/2
                     dx = Camera.x - (self.x - self.size/2)
                 elseif self.x + self.size/2 > Camera.x + love.graphics.getWidth() then
-                    -- self.x = Camera.x + love.graphics.getWidth() - self.size/2
                     dx = (Camera.x + love.graphics.getWidth()) - (self.x + self.size/2)
                 end
                 if self.y - self.size/2 < Camera.y then
-                    -- self.y = Camera.y + self.size/2
                     dy = Camera.y - (self.y - self.size/2)
                 elseif self.y + self.size/2 > Camera.y + love.graphics.getHeight() then
-                    -- self.y = Camera.y + love.graphics.getHeight() - self.size/2
                     dy = (Camera.y + love.graphics.getHeight()) - (self.y + self.size/2)
                 end
             end
@@ -154,7 +153,6 @@ function AbstractEnemy(x, y, hp, speed)
         local dx, dy = 0, 0
         for functionName, functionLogic in pairs(self.MoveFunctions) do
             local ddx, ddy = functionLogic(self)
-            -- if functionName == "AvoidCollisions" and self.size == 60 then print(ddx, ddy) end
             dx = dx + ddx
             dy = dy + ddy
         end

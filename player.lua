@@ -96,22 +96,10 @@ function NewPlayer()
         self.particleSystem:update(DeltaTime)
     end,
     UpdateState = function (self)
-        -- if IsOnTheEdge(self.x, self.y, self.size) then
-        --     if self.x - self.size/2 < Camera.x then
-        --         self.x = Camera.x + self.size/2
-        --     elseif self.x + self.size/2 > Camera.x + love.graphics.getWidth() then
-        --         self.x = Camera.x + love.graphics.getWidth() - self.size/2
-        --     end
-        --     if self.y - self.size/2 < Camera.y then
-        --         self.y = Camera.y + self.size/2
-        --     elseif self.y + self.size/2 > Camera.y + love.graphics.getHeight() then
-        --         self.y = Camera.y + love.graphics.getHeight() - self.size/2
-        --     end
-        -- end
         -- firing
-        self.fireCooldown = self.fireCooldown + DeltaTime
-        if self.fireCooldown >= 0.5 then
-            self.fireCooldown = 0
+        self.canFireTimer = self.canFireTimer + DeltaTime
+        if self.canFireTimer > self.fireDelay then
+            self.canFireTimer = 0
             self.canFire = true
         end
 
@@ -125,19 +113,39 @@ function NewPlayer()
         end
         if self.collideCooldown >= 1 then self.collideCooldown = 0 end
         for i=1, #Enemies do
+            local enemy = Enemies[i]
+            if enemy.timeFromDeath > 0 then goto continue end
             if 0 < self.collideCooldown and self.collideCooldown < 1 then 
                 self.isColliding = false 
                 break
             end
             -- Просто передать 2 функции аргументами не получается. начинает жаловаться на то что w2 это nil
             local x1,y1,w1,h1 = self:GetHitbox()
-            local x2,y2,w2,h2 = Enemies[i]:GetHitbox()
+            local x2,y2,w2,h2 = enemy:GetHitbox()
             self.isColliding = CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
             if self.isColliding then 
                 self.collideCooldown = self.collideCooldown + DeltaTime
                 break
             end
         
+            ::continue::
+        end
+        for i=1, #Bullets do
+            if Bullets[i].isShotByPlayer then goto continue end
+            if 0 < self.collideCooldown and self.collideCooldown < 1 then 
+                self.isColliding = false 
+                break
+            end
+            -- Просто передать 2 функции аргументами не получается. начинает жаловаться на то что w2 это nil
+            local x1,y1,w1,h1 = self:GetHitbox()
+            local x2,y2,w2,h2 = Bullets[i]:GetHitbox()
+            self.isColliding = CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
+            if self.isColliding then 
+                Bullets[i].isAlive = false
+                self.collideCooldown = self.collideCooldown + DeltaTime
+                break
+            end
+            ::continue::
         end
 
         if self.isColliding then
@@ -150,27 +158,18 @@ function NewPlayer()
             GameState.state.running = false
         end
 
-        
-
-
-        self.canFireTimer = self.canFireTimer + DeltaTime
-        if self.canFireTimer > self.fireDelay then
-            self.canFireTimer = 0
-            self.canFire = true
-        end
-
     end,
     Fire = function (self)
         if not self.canFire then return end
 
         local fire = function (index)
-            index = index % #Enemies + 1
+            if index > #Enemies then return end
             local enemy = Enemies[index]
 
             local angle = math.atan2((enemy.y - self.y), (enemy.x - self.x))
             angle = angle + math.rad((math.random() - 0.5)*6)
 
-            table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, 5, angle, 30, self.bulletDamage))
+            table.insert(Bullets, #Bullets + 1, NewBullet(true, self.x, self.y, 5, angle, 50, self.bulletDamage))
         end
 
         for i=1, self.shotsNumber do
@@ -178,7 +177,7 @@ function NewPlayer()
         end
 
         self.canFire = false
-        self.fireCooldown = 0
+        self.canFireTimer = 0
     end
     }
 end

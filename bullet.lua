@@ -10,6 +10,9 @@ function NewBullet(isShotByPlayer, x, y, size, angle, speed, damage)
         damage = damage,
         Draw = function (self)
             love.graphics.setColor(1, 1, 1)
+            if not self.isShotByPlayer then
+                love.graphics.setColor(1, 0, 0)
+            end
             love.graphics.circle("fill", self.x, self.y, self.size)
             DrawHitbox({self:GetHitbox()})
         end,

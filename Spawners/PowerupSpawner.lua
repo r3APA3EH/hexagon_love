@@ -1,8 +1,7 @@
-function NewPowerup(type)
+function NewPowerup(type, x, y)
     if type == "random" then
         type = RandomChoice({"bulletDamage", "hp", "speed", "speed", "speed", "speed", "speed", "speed", "speed", "speed", "speed", "speed", "speed", "speed", "shots", "fireSpeed", "fireSpeed", "fireSpeed", "fireSpeed", "fireSpeed", "fireSpeed", "fireSpeed", "fireSpeed", "fireSpeed"})
     end
-    local x,y = GetRandomSpotOnScreenPerimeter()
     local pickupFunction
     if type == "hp" then
         pickupFunction = function ()

@@ -13,6 +13,7 @@ function Pickupable(x, y, PickupFunction, lifetime)
         return self.x - self.size/2, self.y - self.size/2, self.size, self.size
     end,
     Draw = function (self)
+        love.graphics.setColor(1, 1, 1)
         love.graphics.circle("fill", self.x, self.y, self.size/2)
     end,
     UpdateState = function (self)
