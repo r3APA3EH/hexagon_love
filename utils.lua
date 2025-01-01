@@ -87,9 +87,41 @@ function MergeTables(first_table, second_table)
     return first_table
 end
 
-function RandomChoice(table)
-    local n = math.random(#table)
-    return table[n]
+function RandomChoice(table, c)
+    -- print(Dump(table))
+    -- print(Dump(c))
+    if type(c) == "nil" then
+        local n = math.random(#table)
+        return table[n]
+    end
+
+    local chances = {}
+    for key, value in ipairs(c) do
+        chances[key] = value
+    end
+
+    
+
+
+    local chancesSum = 0
+
+    for key, value in ipairs(chances) do
+        local chance = value
+        chances[key] = chances[key] + chancesSum
+        chancesSum = chancesSum + chance
+
+    end
+
+    local n = math.random(chancesSum)
+    print(Dump(table))
+    print(Dump(chances))
+    print(n)
+    for key, value in ipairs(chances) do
+        if value >= n then
+            return table[key]
+        end
+    end
+    
 end
 function GetRandomSpotOnScreenPerimeter()
     local side = math.random(1,4)

@@ -33,7 +33,7 @@ function NewPlayer()
     canFire = true,
     canFireTimer = 0,
     fireDelay = 1,
-    shotsNumber = 2,
+    shotsNumber = 1,
     bulletDamage = 1,
     GetHitbox = function (self)
         return self.x - self.size/2, self.y - self.size/2, self.size, self.size
@@ -73,9 +73,9 @@ function NewPlayer()
         local speed = self.speed
 
         if distanceToCursor < speed then
-            speed = distanceToCursor
+            speed = distanceToCursor - self.size/1.5
         end
-        if distanceToCursor < self.size/2 then
+        if distanceToCursor <= self.size/1.5 then
             speed = 0
         end
         

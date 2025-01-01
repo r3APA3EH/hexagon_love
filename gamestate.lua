@@ -86,9 +86,9 @@ MainLoop = function ()
     TimeFromLastEnemySpawn = TimeFromLastEnemySpawn + DeltaTime
 
     if TimeFromLastEnemySpawn >= EnemySpawnCooldown then
-        table.insert(Enemies, #Enemies + 1, NewEnemy("random", 1 + math.random(3, 5) * math.sqrt(love.timer.getTime() - LastRespawnTime)/10,2 + math.random()*4))
+        table.insert(Enemies, #Enemies + 1, NewEnemy("random", 1 + math.random(3, 5) * math.sqrt(love.timer.getTime() - LastRespawnTime)/10, 1 + math.random()))
         TimeFromLastEnemySpawn = 0
-        EnemySpawnCooldown = math.random()*math.sqrt(#Enemies) / math.sqrt(love.timer.getTime() - LastRespawnTime)
+        EnemySpawnCooldown = math.random()*#Enemies/10 / math.sqrt(love.timer.getTime() - LastRespawnTime)
     end
 end
 

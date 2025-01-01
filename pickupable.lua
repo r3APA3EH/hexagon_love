@@ -1,4 +1,4 @@
-function Pickupable(x, y, PickupFunction, lifetime)
+function Pickupable(x, y, lifetime, PickupFunction, drawFunction)
     
     return
     {
@@ -9,12 +9,12 @@ function Pickupable(x, y, PickupFunction, lifetime)
     size = 30,
     isAlive = true,
     PickupFunction = PickupFunction,
+    DrawFunction = drawFunction,
     GetHitbox = function (self)
         return self.x - self.size/2, self.y - self.size/2, self.size, self.size
     end,
     Draw = function (self)
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.circle("fill", self.x, self.y, self.size/2)
+        self:DrawFunction()
     end,
     UpdateState = function (self)
         self.timeLived = self.timeLived + DeltaTime
